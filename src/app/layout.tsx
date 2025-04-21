@@ -1,15 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local";
+import { Inter } from "next/font/google"; // Import Google Font
 import "@/app/globals.css";
 
 import { cn } from "@/lib/utils";
 import { Providers } from "@/components/providers";
 import { Toaster as Sonner } from "@/components/ui/sonner"; // Use Sonner as recommended
 
-// Font setup
-const fontSans = localFont({
-  src: "../assets/fonts/Inter-Variable.woff2", // Adjust path if necessary - REMINDER: Add this font file!
-  variable: "--font-sans",
+// Font setup using Google Fonts
+const fontSans = Inter({
+  subsets: ["latin"], // Specify subsets if needed
+  variable: "--font-sans", // Assign the CSS variable
   display: "swap",
 });
 
