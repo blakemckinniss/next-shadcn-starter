@@ -1,0 +1,642 @@
+TITLE: Dynamic Few-Shot Prompting with Semantic Similarity in Langchain.js
+DESCRIPTION: This snippet shows how to implement dynamic few-shot prompting using `SemanticSimilarityExampleSelector` in Langchain.js. It demonstrates setting up a vectorstore for semantic similarity-based example selection and configuring the prompt template to dynamically select relevant examples during execution.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/how_to/few_shot_examples_chat.ipynb#2025-04-21_snippet_1
+
+LANGUAGE: python
+CODE:
+```
+import { SemanticSimilarityExampleSelector } from "@langchain/core/example_selectors";
+import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { OpenAIEmbeddings } from '@langchain/openai';
+
+const examples = [
+  { input: '2+2', output: '4' },
+  { input: '2+3', output: '5' },
+  { input: '2+4', output: '6' },
+  { input: 'What did the cow say to the moon?', output: 'nothing at all' },
+  {
+    input: 'Write me a poem about the moon',
+    output: 'One for the moon, and one for me, who are we to talk about the moon?',
+  },
+];
+
+const toVectorize = examples.map((example) => `${example.input} ${example.output}`);
+const embeddings = new OpenAIEmbeddings();
+const vectorStore = await MemoryVectorStore.fromTexts(toVectorize, examples, embeddings);
+```
+
+LANGUAGE: python
+CODE:
+```
+const exampleSelector = new SemanticSimilarityExampleSelector(
+    {
+        vectorStore,
+        k: 2
+    }
+)
+
+// The prompt template will load examples by passing the input do the `select_examples` method
+await exampleSelector.selectExamples({ input: "horse"})
+```
+
+LANGUAGE: python
+CODE:
+```
+import {
+    ChatPromptTemplate,
+    FewShotChatMessagePromptTemplate,
+} from "@langchain/core/prompts"
+
+// Define the few-shot prompt.
+const fewShotPrompt = new FewShotChatMessagePromptTemplate({
+    // The input variables select the values to pass to the example_selector
+    inputVariables: ["input"],
+    exampleSelector,
+    // Define how ech example will be formatted.
+    // In this case, each example will become 2 messages:
+    // 1 human, and 1 AI
+    examplePrompt: ChatPromptTemplate.fromMessages(
+        [["human", "{input}"], ["ai", "{output}"]]
+    ),
+})
+
+const results = await fewShotPrompt.invoke({ input: "What's 3+3?" });
+console.log(results.toChatMessages())
+```
+
+LANGUAGE: python
+CODE:
+```
+const finalPrompt = ChatPromptTemplate.fromMessages(
+    [
+        ["system", "You are a wondrous wizard of math."],
+        fewShotPrompt,
+        ["human", "{input}"],
+    ]
+)
+
+const result = await fewShotPrompt.invoke({ input: "What's 3+3?" });
+console.log(result)
+```
+
+LANGUAGE: python
+CODE:
+```
+const chain = finalPrompt.pipe(model);
+
+await chain.invoke({ input: "What's 3+3?" })
+```
+
+----------------------------------------
+
+TITLE: Creating a Tool in LangChainJS
+DESCRIPTION: This snippet demonstrates how to create a tool using the tool function from the LangChainJS library. A tool is defined to multiply two numbers with an associated schema for input validation.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/concepts/tool_calling.mdx#2025-04-21_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+import { tool } from "@langchain/core/tools";
+
+const multiply = tool(
+  ({ a, b }: { a: number; b: number }): number => {
+    /**
+     * Multiply a and b.
+     */
+    return a * b;
+  },
+  {
+    name: "multiply",
+    description: "Multiply two numbers",
+    schema: z.object({
+      a: z.number(),
+      b: z.number(),
+    }),
+  }
+);
+```
+
+----------------------------------------
+
+TITLE: Character-Based Text Splitting in TypeScript with LangChain
+DESCRIPTION: Demonstrates how to use CharacterTextSplitter to split a document into chunks based on character count. This implementation allows setting the chunk size and overlap between chunks.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/concepts/text_splitters.mdx#2025-04-21_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+import { CharacterTextSplitter } from "@langchain/textsplitters";
+const textSplitter = new CharacterTextSplitter({
+  chunkSize: 100,
+  chunkOverlap: 0,
+});
+const texts = await textSplitter.splitText(document);
+```
+
+----------------------------------------
+
+TITLE: Implementing a Basic RAG Workflow with OpenAI Chat Model in TypeScript
+DESCRIPTION: This code demonstrates a simple Retrieval Augmented Generation (RAG) workflow. It retrieves relevant documents based on a query, incorporates them into a system prompt, and uses ChatOpenAI to generate a response that leverages the retrieved context. The example includes system prompt formatting, document retrieval, and model invocation.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/concepts/rag.mdx#2025-04-21_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+import { ChatOpenAI } from "@langchain/openai";
+
+// Define a system prompt that tells the model how to use the retrieved context
+const systemPrompt = `You are an assistant for question-answering tasks.
+Use the following pieces of retrieved context to answer the question.
+If you don't know the answer, just say that you don't know.
+Use three sentences maximum and keep the answer concise.
+Context: {context}:`;
+
+// Define a question
+const question =
+  "What are the main components of an LLM-powered autonomous agent system?";
+
+// Retrieve relevant documents
+const docs = await retriever.invoke(question);
+
+// Combine the documents into a single string
+const docsText = docs.map((d) => d.pageContent).join("");
+
+// Populate the system prompt with the retrieved context
+const systemPromptFmt = systemPrompt.replace("{context}", docsText);
+
+// Create a model
+const model = new ChatOpenAI({
+  model: "gpt-4o",
+  temperature: 0,
+});
+
+// Generate a response
+const questions = await model.invoke([
+  {
+    role: "system",
+    content: systemPromptFmt,
+  },
+  {
+    role: "user",
+    content: question,
+  },
+]);
+```
+
+----------------------------------------
+
+TITLE: Using MessagesPlaceholder in ChatPromptTemplate
+DESCRIPTION: Example of using MessagesPlaceholder to insert a list of messages into a specific location in a ChatPromptTemplate. This allows for dynamic insertion of multiple messages at once.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/concepts/prompt_templates.mdx#2025-04-21_snippet_2
+
+LANGUAGE: typescript
+CODE:
+```
+import {
+  ChatPromptTemplate,
+  MessagesPlaceholder,
+} from "@langchain/core/prompts";
+import { HumanMessage } from "@langchain/core/messages";
+
+const promptTemplate = ChatPromptTemplate.fromMessages([
+  ["system", "You are a helpful assistant"],
+  new MessagesPlaceholder("msgs"),
+]);
+
+await promptTemplate.invoke({ msgs: [new HumanMessage("hi!")] });
+```
+
+LANGUAGE: text
+CODE:
+```
+ChatPromptValue {
+  messages: [
+    SystemMessage {
+      "content": "You are a helpful assistant",
+      "additional_kwargs": {},
+      "response_metadata": {}
+    },
+    HumanMessage {
+      "content": "hi!",
+      "additional_kwargs": {},
+      "response_metadata": {}
+    }
+  ]
+}
+```
+
+----------------------------------------
+
+TITLE: Defining Structured Outputs - LangChain TypeScript
+DESCRIPTION: The code demonstrates how to define structured outputs using a schema within LangChain's chat model interface. It employs a Zod schema to ensure model outputs conform to a specific structure. Prerequisites include a Zod schema definition and a compatible chat model. Inputs involve the schema, and outputs are structured model responses. Constraints include the necessity of schema compatibility and Zod library.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/concepts/why_langchain.mdx#2025-04-21_snippet_1
+
+LANGUAGE: typescript
+CODE:
+```
+// Define tool as a Zod schema
+const schema = z.object({ ... });
+// Bind schema to model
+const modelWithStructure = model.withStructuredOutput(schema)
+```
+
+----------------------------------------
+
+TITLE: Streaming Agent Responses in TypeScript
+DESCRIPTION: This code demonstrates how to use the updated agent to answer a query about an artist, streaming the agent's thought process and actions. It showcases the agent's use of the retriever tool for proper noun verification.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/tutorials/sql_qa.ipynb#2025-04-21_snippet_28
+
+LANGUAGE: typescript
+CODE:
+```
+let inputs4 = { messages: [{ role: "user", content: "How many albums does alis in chain have?" }] };
+
+for await (
+  const step of await agent2.stream(inputs4, {
+    streamMode: "values",
+  })
+) {
+    const lastMessage = step.messages[step.messages.length - 1];
+    prettyPrint(lastMessage);
+    console.log("-----\n");
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing Query Analysis in LangGraph RAG Application
+DESCRIPTION: This snippet shows the implementation of query analysis in the LangGraph RAG application. It defines the state annotation, query analysis function, retrieval function, and generation function, then compiles them into a graph.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/tutorials/rag.ipynb#2025-04-21_snippet_24
+
+LANGUAGE: python
+CODE:
+```
+const StateAnnotationQA = Annotation.Root({
+  question: Annotation<string>,
+  // highlight-start
+  search: Annotation<z.infer<typeof searchSchema>>,
+  // highlight-end
+  context: Annotation<Document[]>,
+  answer: Annotation<string>,
+});
+
+
+// highlight-start
+const analyzeQuery = async (state: typeof InputStateAnnotation.State) => {
+  const result = await structuredLlm.invoke(state.question)
+  return { search: result }
+};
+// highlight-end
+
+
+const retrieveQA = async (state: typeof StateAnnotationQA.State) => {
+  // highlight-start
+  const filter = (doc) => doc.metadata.section === state.search.section;
+  const retrievedDocs = await vectorStore.similaritySearch(
+    state.search.query,
+    2,
+    filter
+  )
+  // highlight-end
+  return { context: retrievedDocs };
+};
+
+
+const generateQA = async (state: typeof StateAnnotationQA.State) => {
+  const docsContent = state.context.map(doc => doc.pageContent).join("\n");
+  const messages = await promptTemplate.invoke({ question: state.question, context: docsContent });
+  const response = await llm.invoke(messages);
+  return { answer: response.content };
+};
+
+
+
+const graphQA = new StateGraph(StateAnnotationQA)
+  .addNode("analyzeQuery", analyzeQuery)
+  .addNode("retrieveQA", retrieveQA)
+  .addNode("generateQA", generateQA)
+  .addEdge("__start__", "analyzeQuery")
+  .addEdge("analyzeQuery", "retrieveQA")
+  .addEdge("retrieveQA", "generateQA")
+  .addEdge("generateQA", "__end__")
+  .compile();
+```
+
+----------------------------------------
+
+TITLE: Visualizing Query Analysis LangGraph
+DESCRIPTION: This code generates a visualization of the LangGraph with query analysis using Mermaid. It's designed to work in a Jupyter notebook environment with tslab.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/tutorials/rag.ipynb#2025-04-21_snippet_25
+
+LANGUAGE: javascript
+CODE:
+```
+// Note: tslab only works inside a jupyter notebook. Don't worry about running this code yourself!
+import * as tslab from "tslab";
+
+const image = await graphQA.getGraph().drawMermaidPng();
+const arrayBuffer = await image.arrayBuffer();
+
+await tslab.display.png(new Uint8Array(arrayBuffer));
+```
+
+----------------------------------------
+
+TITLE: Configuring LangSmith API Key for Tracing
+DESCRIPTION: Optional configuration for enabling automated tracing with LangSmith API key
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/integrations/retrievers/self_query/chroma.ipynb#2025-04-21_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+// process.env.LANGSMITH_API_KEY = "<YOUR API KEY HERE>";
+// process.env.LANGSMITH_TRACING = "true";
+```
+
+----------------------------------------
+
+TITLE: Fetching and Encoding Image Data in JavaScript
+DESCRIPTION: This snippet uses Axios to fetch an image from a URL and convert it to a Base64 string for further processing. Required dependency: axios. Inputs: Image URL. Outputs: Base64 encoded image data.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/how_to/multimodal_prompts.ipynb#2025-04-21_snippet_1
+
+LANGUAGE: javascript
+CODE:
+```
+import axios from "axios";
+
+const imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg";
+const axiosRes = await axios.get(imageUrl, { responseType: "arraybuffer" });
+const base64 = btoa(
+  new Uint8Array(axiosRes.data).reduce(
+    (data, byte) => data + String.fromCharCode(byte),
+    ''
+  )
+);
+```
+
+----------------------------------------
+
+TITLE: Viewing Document Content with Console Output
+DESCRIPTION: A simple example that outputs the first 500 characters of the loaded document content to the console, allowing the user to preview what was loaded.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/tutorials/rag.ipynb#2025-04-21_snippet_8
+
+LANGUAGE: python
+CODE:
+```
+console.log(docs[0].pageContent.slice(0, 500));
+```
+
+----------------------------------------
+
+TITLE: Loading Web Content with CheerioWebBaseLoader in LangChain
+DESCRIPTION: Demonstrates how to load content from a web page using CheerioWebBaseLoader, which parses HTML content using cheerio. This example specifically targets paragraph elements and loads a blog post about AI agents.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/tutorials/rag.ipynb#2025-04-21_snippet_7
+
+LANGUAGE: python
+CODE:
+```
+import "cheerio";
+import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
+
+const pTagSelector = "p";
+const cheerioLoader = new CheerioWebBaseLoader(
+  "https://lilianweng.github.io/posts/2023-06-23-agent/",
+  {
+    selector: pTagSelector
+  }
+);
+
+const docs = await cheerioLoader.load();
+
+console.assert(docs.length === 1);
+console.log(`Total characters: ${docs[0].pageContent.length}`);
+```
+
+----------------------------------------
+
+TITLE: Creating Configurable Retrieval Chain in Typescript
+DESCRIPTION: This code demonstrates how to create a configurable retrieval chain in TypeScript using LangChain. It defines a chain that takes a question and a configurable object (containing namespace information) as input. It retrieves documents from the vectorstore using the namespace specified in the configurable object, formats the documents into context, and then uses a prompt and model to generate an answer.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/how_to/qa_per_user.ipynb#2025-04-21_snippet_4
+
+LANGUAGE: typescript
+CODE:
+```
+import { RunnablePassthrough, RunnableSequence } from "@langchain/core/runnables";
+
+const chain = RunnableSequence.from([
+  RunnablePassthrough.assign({
+    context: async (input: { question: string }, config) => {
+      if (!config || !("configurable" in config)) {
+        throw new Error("No config");
+      }
+      const { configurable } = config;
+      const documents = await vectorStore.asRetriever(configurable).invoke(
+        input.question,
+        config,
+      );
+      return documents.map((doc) => doc.pageContent).join("\n\n");
+    },
+  }),
+  prompt,
+  model,
+  new StringOutputParser(),
+]);
+```
+
+----------------------------------------
+
+TITLE: Complete RAG Implementation with LangGraph Chat Management
+DESCRIPTION: Provides a complete implementation that combines document loading, text splitting, vector storage, retrieval, and LangGraph for building a conversational RAG system with persistent chat history. This comprehensive example includes all necessary imports and configuration.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/how_to/qa_chat_history_how_to.ipynb#2025-04-21_snippet_12
+
+LANGUAGE: typescript
+CODE:
+```
+import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { MemoryVectorStore } from "langchain/vectorstores/memory"
+import { OpenAIEmbeddings, ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
+import { createHistoryAwareRetriever } from "langchain/chains/history_aware_retriever";
+import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
+import { createRetrievalChain } from "langchain/chains/retrieval";
+import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
+import { StateGraph, START, END, MemorySaver, messagesStateReducer, Annotation } from "@langchain/langgraph";
+import { v4 as uuidv4 } from "uuid";
+
+const llm2 = new ChatOpenAI({ model: "gpt-4o" });
+
+const loader2 = new CheerioWebBaseLoader(
+  "https://lilianweng.github.io/posts/2023-06-23-agent/"
+);
+
+const docs2 = await loader2.load();
+
+const textSplitter2 = new RecursiveCharacterTextSplitter({ chunkSize: 1000, chunkOverlap: 200 });
+const splits2 = await textSplitter2.splitDocuments(docs2);
+const vectorStore2 = await MemoryVectorStore.fromDocuments(splits2, new OpenAIEmbeddings());
+
+// Retrieve and generate using the relevant snippets of the blog.
+const retriever2 = vectorStore2.asRetriever();
+
+const contextualizeQSystemPrompt2 =
+  "Given a chat history and the latest user question " +
+  "which might reference context in the chat history, " +
+  "formulate a standalone question which can be understood " +
+  "without the chat history. Do NOT answer the question, " +
+  "just reformulate it if needed and otherwise return it as is.";
+
+const contextualizeQPrompt2 = ChatPromptTemplate.fromMessages(
+  [
+    ["system", contextualizeQSystemPrompt2],
+    new MessagesPlaceholder("chat_history"),
+    ["human", "{input}"],
+  ]
+)
+
+const historyAwareRetriever2 = await createHistoryAwareRetriever({
+  llm: llm2,
+  retriever: retriever2,
+  rephrasePrompt: contextualizeQPrompt2
+});
+
+const systemPrompt2 = 
+  "You are an assistant for question-answering tasks. " +
+  "Use the following pieces of retrieved context to answer " +
+  "the question. If you don't know the answer, say that you " +
+  "don't know. Use three sentences maximum and keep the " +
+  "answer concise." +
+  "\n\n" +
+  "{context}";
+
+const qaPrompt2 = ChatPromptTemplate.fromMessages([
+  ["system", systemPrompt2],
+  new MessagesPlaceholder("chat_history"),
+  ["human", "{input}"],
+]);
+
+const questionAnswerChain2 = await createStuffDocumentsChain({
+  llm: llm2,
+  prompt: qaPrompt2,
+});
+
+const ragChain2 = await createRetrievalChain({
+  retriever: historyAwareRetriever2,
+  combineDocsChain: questionAnswerChain2,
+});
+
+// Define the State interface
+const GraphAnnotation2 = Annotation.Root({
+  input: Annotation<string>(),
+  chat_history: Annotation<BaseMessage[]>({
+    reducer: messagesStateReducer,
+    default: () => [],
+  }),
+  context: Annotation<string>(),
+  answer: Annotation<string>(),
+})
+
+// Define the call_model function
+async function callModel2(state: typeof GraphAnnotation2.State) {
+  const response = await ragChain2.invoke(state);
+  return {
+    chat_history: [
+      new HumanMessage(state.input),
+      new AIMessage(response.answer),
+    ],
+    context: response.context,
+    answer: response.answer,
+  };
+}
+
+// Create the workflow
+const workflow2 = new StateGraph(GraphAnnotation2)
+  .addNode("model", callModel2)
+  .addEdge(START, "model")
+  .addEdge("model", END);
+
+// Compile the graph with a checkpointer object
+const memory2 = new MemorySaver();
+const app2 = workflow2.compile({ checkpointer: memory2 });
+
+const threadId2 = uuidv4();
+const config2 = { configurable: { thread_id: threadId2 } };
+
+const result3 = await app2.invoke(
+  { input: "What is Task Decomposition?" },
+  config2,
+)
+console.log(result3.answer);
+
+const result4 = await app2.invoke(
+  { input: "What is one way of doing it?" },
+  config2,
+)
+console.log(result4.answer);
+```
+
+----------------------------------------
+
+TITLE: Invoking RAG Chain
+DESCRIPTION: Shows how to invoke the constructed RAG chain with a query.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/integrations/retrievers/bedrock-knowledge-bases.ipynb#2025-04-21_snippet_6
+
+LANGUAGE: python
+CODE:
+```
+await ragChain.invoke("...")
+```
+
+----------------------------------------
+
+TITLE: Initializing OpenAIEmbeddings
+DESCRIPTION: Creating an instance of OpenAIEmbeddings with a specific model.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/tutorials/rag.ipynb#2025-04-21_snippet_3
+
+LANGUAGE: javascript
+CODE:
+```
+import { OpenAIEmbeddings } from "@langchain/openai";
+
+const embeddings = new OpenAIEmbeddings({model: "text-embedding-3-large"});
+```
+
+----------------------------------------
+
+TITLE: Invoking a Model with Tool Calling
+DESCRIPTION: This snippet illustrates how a model can be invoked with user input, demonstrating how tool calling works based on the relevance of the input to the tools bound to the model.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/concepts/tool_calling.mdx#2025-04-21_snippet_3
+
+LANGUAGE: typescript
+CODE:
+```
+const result = await llmWithTools.invoke("Hello world!");
+```
+
+----------------------------------------
+
+TITLE: Creating a Composed Runnable Using LCEL in LangChain.js
+DESCRIPTION: This example shows how to create a composed Runnable by chaining multiple components together using the LangChain Expression Language (LCEL) pipe method, which connects the output of one component to the input of the next.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/concepts/runnables.mdx#2025-04-21_snippet_1
+
+LANGUAGE: typescript
+CODE:
+```
+const chain = prompt.pipe(chatModel).pipe(outputParser);
+```
+
+----------------------------------------
+
+TITLE: Invoking LangGraph RAG Application
+DESCRIPTION: This code snippet shows how to invoke the LangGraph RAG application synchronously. It takes a question as input and returns the context and answer.
+SOURCE: https://github.com/langchain-ai/langchainjs/blob/main/docs/core_docs/docs/tutorials/rag.ipynb#2025-04-21_snippet_17
+
+LANGUAGE: python
+CODE:
+```
+let inputs = { question: "What is Task Decomposition?" };
+
+const result = await graph.invoke(inputs);
+console.log(result.context.slice(0, 2));
+console.log(`\nAnswer: ${result["answer"]}`);
+```

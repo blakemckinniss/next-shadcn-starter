@@ -1,0 +1,665 @@
+TITLE: Creating a Basic Query with useQuery Hook in React
+DESCRIPTION: This snippet demonstrates how to create a basic query using the useQuery hook from TanStack Query. It shows the minimal required parameters: a unique query key and a query function.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/queries.md#2025-04-19_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+import { useQuery } from '@tanstack/react-query'
+
+function App() {
+  const info = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing React Query Core Concepts in a Todo App
+DESCRIPTION: This snippet demonstrates how to use React Query's core features in a Todo application. It shows the setup of QueryClient, usage of useQuery for fetching data, useMutation for adding new todos, and query invalidation for refreshing data after mutations.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/quick-start.md#2025-04-19_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+import { getTodos, postTodo } from '../my-api'
+
+// Create a client
+const queryClient = new QueryClient()
+
+function App() {
+  return (
+    // Provide the client to your App
+    <QueryClientProvider client={queryClient}>
+      <Todos />
+    </QueryClientProvider>
+  )
+}
+
+function Todos() {
+  // Access the client
+  const queryClient = useQueryClient()
+
+  // Queries
+  const query = useQuery({ queryKey: ['todos'], queryFn: getTodos })
+
+  // Mutations
+  const mutation = useMutation({
+    mutationFn: postTodo,
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ['todos'] })
+    },
+  })
+
+  return (
+    <div>
+      <ul>{query.data?.map((todo) => <li key={todo.id}>{todo.title}</li>)}</ul>
+
+      <button
+        onClick={() => {
+          mutation.mutate({
+            id: Date.now(),
+            title: 'Do Laundry',
+          })
+        }}
+      >
+        Add Todo
+      </button>
+    </div>
+  )
+}
+
+render(<App />, document.getElementById('root'))
+```
+
+----------------------------------------
+
+TITLE: Handling Query States in Vue Template with TanStack Query
+DESCRIPTION: This example shows how to use the useQuery hook in a Vue component's setup script and handle different query states (loading, error, success) in the template. It demonstrates destructuring the query result and using Vue's template syntax to conditionally render content based on the query state.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/vue/guides/queries.md#2025-04-19_snippet_1
+
+LANGUAGE: vue
+CODE:
+```
+<script setup>
+import { useQuery } from '@tanstack/vue-query'
+
+const { isPending, isError, data, error } = useQuery({
+  queryKey: ['todos'],
+  queryFn: fetchTodoList,
+})
+</script>
+
+<template>
+  <span v-if="isPending">Loading...</span>
+  <span v-else-if="isError">Error: {{ error.message }}</span>
+  <!-- We can assume by this point that `isSuccess === true` -->
+  <ul v-else-if="data">
+    <li v-for="todo in data" :key="todo.id">{{ todo.title }}</li>
+  </ul>
+</template>
+```
+
+----------------------------------------
+
+TITLE: Implementing Dependent Query with useQuery in React
+DESCRIPTION: This snippet demonstrates how to create a dependent query using the useQuery hook. It first fetches user data, then uses the user ID to fetch the user's projects only when the user data is available.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/dependent-queries.md#2025-04-19_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+// Get the user
+const { data: user } = useQuery({
+  queryKey: ['user', email],
+  queryFn: getUserByEmail,
+})
+
+const userId = user?.id
+
+// Then get the user's projects
+const {
+  status,
+  fetchStatus,
+  data: projects,
+} = useQuery({
+  queryKey: ['projects', userId],
+  queryFn: getProjectsByUser,
+  // The query will not execute until the userId exists
+  enabled: !!userId,
+})
+```
+
+----------------------------------------
+
+TITLE: Using Status State for Query Handling in Angular
+DESCRIPTION: Demonstrates an alternative approach to handling query states using the status property instead of boolean flags. It uses a switch statement in the template to render different content based on the query status.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/angular/guides/queries.md#2025-04-19_snippet_3
+
+LANGUAGE: angular-ts
+CODE:
+```
+@Component({
+  selector: 'todos',
+  standalone: true,
+  template: `
+    @switch (todos.status()) {
+      @case ('pending') {
+        <span>Loading...</span>
+      }
+      @case ('error') {
+        <span>Error: {{ todos.error()?.message }}</span>
+      }
+      <!-- also status === 'success', but "else" logic works, too -->
+      @default {
+        <ul>
+          @for (todo of todos.data(); track todo.id) {
+            <li>{{ todo.title }}</li>
+          } @empty {
+            <li>No todos found</li>
+          }
+        </ul>
+      }
+    }
+  `,
+})
+class TodosComponent {}
+```
+
+----------------------------------------
+
+TITLE: Basic Query Usage in Vue with TanStack Query
+DESCRIPTION: This snippet demonstrates the basic usage of a query in a Vue component using the useQuery hook from @tanstack/vue-query. It sets up a query to fetch a list of todos.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/vue/guides/queries.md#2025-04-19_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+import { useQuery } from '@tanstack/vue-query'
+
+const result = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
+```
+
+----------------------------------------
+
+TITLE: Updating a Single Todo with Cache-based Optimistic Updates in React Query
+DESCRIPTION: Demonstrates how to optimistically update a single todo item in the cache, with error handling and rollback functionality.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/optimistic-updates.md#2025-04-19_snippet_5
+
+LANGUAGE: tsx
+CODE:
+```
+useMutation({
+  mutationFn: updateTodo,
+  // When mutate is called:
+  onMutate: async (newTodo) => {
+    // Cancel any outgoing refetches
+    // (so they don't overwrite our optimistic update)
+    await queryClient.cancelQueries({ queryKey: ['todos', newTodo.id] })
+
+    // Snapshot the previous value
+    const previousTodo = queryClient.getQueryData(['todos', newTodo.id])
+
+    // Optimistically update to the new value
+    queryClient.setQueryData(['todos', newTodo.id], newTodo)
+
+    // Return a context with the previous and new todo
+    return { previousTodo, newTodo }
+  },
+  // If the mutation fails, use the context we returned above
+  onError: (err, newTodo, context) => {
+    queryClient.setQueryData(
+      ['todos', context.newTodo.id],
+      context.previousTodo,
+    )
+  },
+  // Always refetch after error or success:
+  onSettled: (newTodo) =>
+    queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] }),
+})
+```
+
+----------------------------------------
+
+TITLE: Mutation Lifecycle Callbacks
+DESCRIPTION: Demonstrates implementation of mutation lifecycle callbacks including onMutate, onError, onSuccess, and onSettled.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/mutations.md#2025-04-19_snippet_3
+
+LANGUAGE: tsx
+CODE:
+```
+useMutation({
+  mutationFn: addTodo,
+  onMutate: (variables) => {
+    return { id: 1 }
+  },
+  onError: (error, variables, context) => {
+    console.log(`rolling back optimistic update with id ${context.id}`)
+  },
+  onSuccess: (data, variables, context) => {
+  },
+  onSettled: (data, error, variables, context) => {
+  },
+})
+```
+
+----------------------------------------
+
+TITLE: Implementing Basic GitHub Repository Data Fetching with TanStack Query
+DESCRIPTION: Demonstrates the basic setup and usage of TanStack Query to fetch GitHub repository statistics. Shows initialization of QueryClient, QueryClientProvider wrapper, and implementation of a query using useQuery hook to fetch and display repository data with loading and error states.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/overview.md#2025-04-19_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
+
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Example />
+    </QueryClientProvider>
+  )
+}
+
+function Example() {
+  const { isPending, error, data } = useQuery({
+    queryKey: ['repoData'],
+    queryFn: () =>
+      fetch('https://api.github.com/repos/TanStack/query').then((res) =>
+        res.json(),
+      ),
+  })
+
+  if (isPending) return 'Loading...'
+
+  if (error) return 'An error has occurred: ' + error.message
+
+  return (
+    <div>
+      <h1>{data.name}</h1>
+      <p>{data.description}</p>
+      <strong>👀 {data.subscribers_count}</strong>{' '}
+      <strong>✨ {data.stargazers_count}</strong>{' '}
+      <strong>🍴 {data.forks_count}</strong>
+    </div>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Basic Todo Creation Mutation Example
+DESCRIPTION: Demonstrates implementing a basic mutation to add a new todo item using the useMutation hook. Shows handling of pending, error, and success states.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/mutations.md#2025-04-19_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+function App() {
+  const mutation = useMutation({
+    mutationFn: (newTodo) => {
+      return axios.post('/todos', newTodo)
+    },
+  })
+
+  return (
+    <div>
+      {mutation.isPending ? (
+        'Adding todo...'
+      ) : (
+        <>
+          {mutation.isError ? (
+            <div>An error occurred: {mutation.error.message}</div>
+          ) : null}
+
+          {mutation.isSuccess ? <div>Todo added!</div> : null}
+
+          <button
+            onClick={() => {
+              mutation.mutate({ id: new Date(), title: 'Do Laundry' })
+            }}
+          >
+            Create Todo
+          </button>
+        </>
+      )}
+    </div>
+  )
+```
+
+----------------------------------------
+
+TITLE: Using Fetch with TanStack Query and Error Handling (TSX)
+DESCRIPTION: Shows how to use the fetch API with TanStack Query, including manual error throwing for unsuccessful HTTP calls, as fetch doesn't throw errors by default.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/query-functions.md#2025-04-19_snippet_2
+
+LANGUAGE: tsx
+CODE:
+```
+useQuery({
+  queryKey: ['todos', todoId],
+  queryFn: async () => {
+    const response = await fetch('/todos/' + todoId)
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+    return response.json()
+  },
+})
+```
+
+----------------------------------------
+
+TITLE: Persisting and Resuming Mutations in React Query
+DESCRIPTION: This snippet demonstrates how to persist mutations to storage and resume them later. It includes setting mutation defaults, handling optimistic updates, and using hydration functions for persistence.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/mutations.md#2025-04-19_snippet_9
+
+LANGUAGE: tsx
+CODE:
+```
+const queryClient = new QueryClient()
+
+// Define the "addTodo" mutation
+queryClient.setMutationDefaults(['addTodo'], {
+  mutationFn: addTodo,
+  onMutate: async (variables) => {
+    // Cancel current queries for the todos list
+    await queryClient.cancelQueries({ queryKey: ['todos'] })
+
+    // Create optimistic todo
+    const optimisticTodo = { id: uuid(), title: variables.title }
+
+    // Add optimistic todo to todos list
+    queryClient.setQueryData(['todos'], (old) => [...old, optimisticTodo])
+
+    // Return context with the optimistic todo
+    return { optimisticTodo }
+  },
+  onSuccess: (result, variables, context) => {
+    // Replace optimistic todo in the todos list with the result
+    queryClient.setQueryData(['todos'], (old) =>
+      old.map((todo) =>
+        todo.id === context.optimisticTodo.id ? result : todo,
+      ),
+    )
+  },
+  onError: (error, variables, context) => {
+    // Remove optimistic todo from the todos list
+    queryClient.setQueryData(['todos'], (old) =>
+      old.filter((todo) => todo.id !== context.optimisticTodo.id),
+    )
+  },
+  retry: 3,
+})
+
+// Start mutation in some component:
+const mutation = useMutation({ mutationKey: ['addTodo'] })
+mutation.mutate({ title: 'title' })
+
+// If the mutation has been paused because the device is for example offline,
+// Then the paused mutation can be dehydrated when the application quits:
+const state = dehydrate(queryClient)
+
+// The mutation can then be hydrated again when the application is started:
+hydrate(queryClient, state)
+
+// Resume the paused mutations:
+queryClient.resumePausedMutations()
+```
+
+----------------------------------------
+
+TITLE: Basic Query Caching with TanStack Query
+DESCRIPTION: Demonstrates the usage of useQuery hook with a todos query showcasing caching behavior. The example uses default gcTime of 5 minutes and staleTime of 0, showing how data is cached, shared between instances, and eventually garbage collected.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/caching.md#2025-04-19_snippet_0
+
+LANGUAGE: javascript
+CODE:
+```
+useQuery({ queryKey: ['todos'], queryFn: fetchTodos })
+```
+
+----------------------------------------
+
+TITLE: Basic Query Invalidation in TanStack Query
+DESCRIPTION: Demonstrates basic query invalidation methods using QueryClient. Shows how to invalidate all queries in cache or queries with specific key prefixes.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/query-invalidation.md#2025-04-19_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+// Invalidate every query in the cache
+queryClient.invalidateQueries()
+// Invalidate every query with a key that starts with `todos`
+queryClient.invalidateQueries({ queryKey: ['todos'] })
+```
+
+----------------------------------------
+
+TITLE: Using useMutation Hook in TanStack Query (TSX)
+DESCRIPTION: This snippet demonstrates how to use the useMutation hook in TanStack Query. It shows the hook's usage with various options and the structure of the returned object. The mutate function is also shown with its parameters.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/reference/useMutation.md#2025-04-19_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+const {
+  data,
+  error,
+  isError,
+  isIdle,
+  isPending,
+  isPaused,
+  isSuccess,
+  failureCount,
+  failureReason,
+  mutate,
+  mutateAsync,
+  reset,
+  status,
+  submittedAt,
+  variables,
+} = useMutation(
+  {
+    mutationFn,
+    gcTime,
+    meta,
+    mutationKey,
+    networkMode,
+    onError,
+    onMutate,
+    onSettled,
+    onSuccess,
+    retry,
+    retryDelay,
+    scope,
+    throwOnError,
+  },
+  queryClient,
+)
+
+mutate(variables, {
+  onError,
+  onSettled,
+  onSuccess,
+})
+```
+
+----------------------------------------
+
+TITLE: Implementing Manual Parallel Queries with TanStack Query
+DESCRIPTION: Demonstrates how to execute multiple queries in parallel using individual useQuery hooks. Each query runs independently and concurrently to maximize fetching efficiency.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/parallel-queries.md#2025-04-19_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+function App () {
+  // The following queries will execute in parallel
+  const usersQuery = useQuery({ queryKey: ['users'], queryFn: fetchUsers })
+  const teamsQuery = useQuery({ queryKey: ['teams'], queryFn: fetchTeams })
+  const projectsQuery = useQuery({ queryKey: ['projects'], queryFn: fetchProjects })
+  ...
+}
+```
+
+----------------------------------------
+
+TITLE: Improved Paginated Query with placeholderData in TanStack Query
+DESCRIPTION: This example shows an improved implementation of paginated queries using the placeholderData feature. It uses keepPreviousData to maintain the previous data while fetching new data, providing a smoother user experience.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/paginated-queries.md#2025-04-19_snippet_1
+
+LANGUAGE: tsx
+CODE:
+```
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import React from 'react'
+
+function Todos() {
+  const [page, setPage] = React.useState(0)
+
+  const fetchProjects = (page = 0) =>
+    fetch('/api/projects?page=' + page).then((res) => res.json())
+
+  const { isPending, isError, error, data, isFetching, isPlaceholderData } =
+    useQuery({
+      queryKey: ['projects', page],
+      queryFn: () => fetchProjects(page),
+      placeholderData: keepPreviousData,
+    })
+
+  return (
+    <div>
+      {isPending ? (
+        <div>Loading...</div>
+      ) : isError ? (
+        <div>Error: {error.message}</div>
+      ) : (
+        <div>
+          {data.projects.map((project) => (
+            <p key={project.id}>{project.name}</p>
+          ))}
+        </div>
+      )}
+      <span>Current Page: {page + 1}</span>
+      <button
+        onClick={() => setPage((old) => Math.max(old - 1, 0))}
+        disabled={page === 0}
+      >
+        Previous Page
+      </button>
+      <button
+        onClick={() => {
+          if (!isPlaceholderData && data.hasMore) {
+            setPage((old) => old + 1)
+          }
+        }}
+        // Disable the Next Page button until we know a next page is available
+        disabled={isPlaceholderData || !data?.hasMore}
+      >
+        Next Page
+      </button>
+      {isFetching ? <span> Loading...</span> : null}
+    </div>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Using Query Status Instead of Booleans in React
+DESCRIPTION: This snippet illustrates an alternative approach to handling query states using the status property instead of boolean flags. It shows how to check for 'pending', 'error', and 'success' states.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/queries.md#2025-04-19_snippet_3
+
+LANGUAGE: tsx
+CODE:
+```
+function Todos() {
+  const { status, data, error } = useQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodoList,
+  })
+
+  if (status === 'pending') {
+    return <span>Loading...</span>
+  }
+
+  if (status === 'error') {
+    return <span>Error: {error.message}</span>
+  }
+
+  // also status === 'success', but "else" logic works, too
+  return (
+    <ul>
+      {data.map((todo) => (
+        <li key={todo.id}>{todo.title}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Accessing Query Result Object in React
+DESCRIPTION: This snippet shows how to access the result object returned by the useQuery hook. The result object contains all the information about the query, including its state and data.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/queries.md#2025-04-19_snippet_1
+
+LANGUAGE: tsx
+CODE:
+```
+const result = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
+```
+
+----------------------------------------
+
+TITLE: Using initialData in TanStack Query (TypeScript/React)
+DESCRIPTION: This snippet demonstrates how to use the 'initialData' option in a TanStack Query to prepopulate the cache with initial data for a query, skipping the initial loading state.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/initial-query-data.md#2025-04-19_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+const result = useQuery({
+  queryKey: ['todos'],
+  queryFn: () => fetch('/todos'),
+  initialData: initialTodos,
+})
+```
+
+----------------------------------------
+
+TITLE: Testing Custom Hook Implementation
+DESCRIPTION: Basic test setup for a React Query custom hook using React Testing Library.
+SOURCE: https://github.com/tanstack/query/blob/main/docs/framework/react/guides/testing.md#2025-04-19_snippet_2
+
+LANGUAGE: tsx
+CODE:
+```
+import { renderHook, waitFor } from '@testing-library/react'
+
+const queryClient = new QueryClient()
+const wrapper = ({ children }) => (
+  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+)
+
+const { result } = renderHook(() => useCustomHook(), { wrapper })
+
+await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+expect(result.current.data).toEqual('Hello')
+```

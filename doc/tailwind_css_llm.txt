@@ -1,0 +1,583 @@
+TITLE: Using Prefix Option to Avoid Tailwind Class Conflicts
+DESCRIPTION: Example demonstrating how to prefix all Tailwind-generated classes and CSS variables to avoid conflicts with existing class names in a project.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/styling-with-utility-classes.mdx#2025-04-18_snippet_31
+
+LANGUAGE: css
+CODE:
+```
+@import "tailwindcss" prefix(tw);
+```
+
+LANGUAGE: css
+CODE:
+```
+@layer theme {
+  :root {
+    --tw-color-red-500: oklch(0.637 0.237 25.331);
+  }
+}
+
+@layer utilities {
+  .tw\:text-red-500 {
+    color: var(--tw-color-red-500);
+  }
+}
+```
+
+----------------------------------------
+
+TITLE: Updating PostCSS Configuration for Tailwind CSS v4
+DESCRIPTION: Changes required in the PostCSS configuration file when upgrading to Tailwind CSS v4. Removes postcss-import and autoprefixer, and updates the Tailwind CSS plugin.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/upgrade-guide.mdx#2025-04-18_snippet_1
+
+LANGUAGE: js
+CODE:
+```
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+```
+
+----------------------------------------
+
+TITLE: Creating a Reusable React Component with Tailwind CSS
+DESCRIPTION: A React component for displaying vacation card information that uses Tailwind CSS classes for styling. The component accepts props for image, text content, and URL to create a consistent card layout.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/styling-with-utility-classes.mdx#2025-04-18_snippet_25
+
+LANGUAGE: jsx
+CODE:
+```
+export function VacationCard({ img, imgAlt, eyebrow, title, pricing, url }) {
+  return (
+    <div>
+      <img className="rounded-lg" src={img} alt={imgAlt} />
+      <div className="mt-4">
+        <div className="text-xs font-bold text-sky-500">{eyebrow}</div>
+        <div className="mt-1 font-bold text-gray-700">
+          <a href={url} className="hover:underline">
+            {title}
+          </a>
+        </div>
+        <div className="mt-2 text-sm text-gray-600">{pricing}</div>
+      </div>
+    </div>
+  );
+}
+```
+
+----------------------------------------
+
+TITLE: Creating a Responsive Card Layout with Tailwind CSS
+DESCRIPTION: Implements a responsive card layout that changes from stacked to side-by-side at larger screen sizes using Tailwind CSS utility classes.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/responsive-design.mdx#2025-04-18_snippet_2
+
+LANGUAGE: html
+CODE:
+```
+<div class="mx-auto max-w-md overflow-hidden rounded-xl bg-white shadow-md md:max-w-2xl">
+  <div class="md:flex">
+    <div class="md:shrink-0">
+      <img
+        class="h-48 w-full object-cover md:h-full md:w-48"
+        src="/img/building.jpg"
+        alt="Modern building architecture"
+      />
+    </div>
+    <div class="p-8">
+      <div class="text-sm font-semibold tracking-wide text-indigo-500 uppercase">Company retreats</div>
+      <a href="#" class="mt-1 block text-lg leading-tight font-medium text-black hover:underline">
+        Incredible accommodation for your team
+      </a>
+      <p class="mt-2 text-gray-500">
+        Looking to take your team away on a retreat to enjoy awesome food and take in some sunshine? We have a list of
+        places to do just that.
+      </p>
+    </div>
+  </div>
+</div>
+```
+
+----------------------------------------
+
+TITLE: Transitioning Components with Headless UI - React JavaScript
+DESCRIPTION: Use this snippet to transition HTML elements or components with the `Transition` component using the new data attribute methods in Headless UI. It is suitable for toggling visibility animations, requiring `useState` and components from `@headlessui/react`.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/blog/2024-06-21-headless-ui-v2-1/index.mdx#2025-04-18_snippet_2
+
+LANGUAGE: JavaScript
+CODE:
+```
+import { Transition } from "@headlessui/react";
+import { useState } from "react";
+
+function Example() {
+  const [isShowing, setIsShowing] = useState(false);
+
+  return (
+    <>
+      <button onClick={() => setIsShowing((isShowing) => !isShowing)}>Toggle</button>
+      // [!code highlight:6]
+      <Transition show={isShowing}>
+        <div className="transition duration-300 data-[closed]:opacity-0">I will fade in and out</div>
+      </Transition>
+    </>
+  );
+}
+```
+
+----------------------------------------
+
+TITLE: Using Absolute Positioning in Tailwind CSS
+DESCRIPTION: Example demonstrating how absolute positioning removes elements from the normal document flow. Absolute elements are positioned relative to their nearest positioned ancestor, and sibling elements ignore their presence.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/position.mdx#2025-04-18_snippet_2
+
+LANGUAGE: html
+CODE:
+```
+<!-- [!code classes:absolute] -->
+<div class="static ...">
+  <!-- Static parent -->
+  <div class="static ..."><p>Static child</p></div>
+  <div class="inline-block ..."><p>Static sibling</p></div>
+  <!-- Static parent -->
+  <div class="absolute ..."><p>Absolute child</p></div>
+  <div class="inline-block ..."><p>Static sibling</p></div>
+</div>
+```
+
+----------------------------------------
+
+TITLE: Using CSS Calc with Arbitrary Values in HTML
+DESCRIPTION: This snippet demonstrates using the `calc()` function to set maximum height dynamically with the class `max-h-[calc(100dvh-(--spacing(6))]`, integrating Tailwind CSS with CSS custom properties.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/styling-with-utility-classes.mdx#2025-04-18_snippet_14
+
+LANGUAGE: html
+CODE:
+```
+<div class="max-h-[calc(100dvh-(--spacing(6))]">
+  <!-- ... -->
+</div>
+```
+
+----------------------------------------
+
+TITLE: Updating Tailwind CSS to Latest Version (Shell)
+DESCRIPTION: This shell command updates Tailwind CSS to the latest version using npm. It's a straightforward way to ensure that your project is using the most recent features and fixes available.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/blog/tailwindcss-v3-2/index.mdx#2025-04-18_snippet_30
+
+LANGUAGE: sh
+CODE:
+```
+npm install -D tailwindcss@latest
+```
+
+----------------------------------------
+
+TITLE: Nesting Multiple Tailwind Variants in CSS
+DESCRIPTION: This CSS snippet illustrates how to apply multiple variants simultaneously using nesting. It applies the `hover` variant within the `dark` variant, changing the background color to black when both conditions are met.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/adding-custom-styles.mdx#2025-04-18_snippet_5
+
+LANGUAGE: css
+CODE:
+```
+/* [!code filename:app.css] */
+.my-element {
+  background: white;
+
+  /* [!code highlight:6] */
+  @variant dark {
+    @variant hover {
+      background: black;
+    }
+  }
+}
+```
+
+LANGUAGE: css
+CODE:
+```
+/* [!code filename:Compiled CSS] */
+.my-element {
+  background: white;
+
+  /* [!code highlight:7] */
+  @media (prefers-color-scheme: dark) {
+    &:hover {
+      @media (hover: hover) {
+        background: black;
+      }
+    }
+  }
+}
+```
+
+----------------------------------------
+
+TITLE: Using Relative Positioning in Tailwind CSS
+DESCRIPTION: Example showing how relative positioning creates a positioning context for absolute children while keeping the element in the normal document flow. Offset properties are calculated relative to the element's normal position.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/position.mdx#2025-04-18_snippet_1
+
+LANGUAGE: html
+CODE:
+```
+<!-- [!code classes:relative] -->
+<div class="relative ...">
+  <p>Relative parent</p>
+  <div class="absolute bottom-0 left-0 ...">
+    <p>Absolute child</p>
+  </div>
+</div>
+```
+
+----------------------------------------
+
+TITLE: Styling Form Input with Tailwind CSS Variants in HTML
+DESCRIPTION: This code snippet demonstrates how to apply Tailwind CSS classes to style a form input element in various states, including invalid, focused, and disabled. It uses pseudo-class variants to apply specific styles for each state.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/hover-focus-and-other-states.mdx#2025-04-18_snippet_8
+
+LANGUAGE: HTML
+CODE:
+```
+<input
+  type="text"
+  value="tbone"
+  disabled
+  class="invalid:border-pink-500 invalid:text-pink-600 focus:border-sky-500 focus:outline focus:outline-sky-500 focus:invalid:border-pink-500 focus:invalid:outline-pink-500 disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 disabled:shadow-none dark:disabled:border-gray-700 dark:disabled:bg-gray-800/20 ..."
+/>
+```
+
+----------------------------------------
+
+TITLE: Installing Tailwind CSS v4.0 with npm and PostCSS
+DESCRIPTION: Three-step installation process for Tailwind CSS v4.0 showing the npm installation command, PostCSS plugin configuration, and the simplified one-line CSS import.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/blog/tailwindcss-v4/index.mdx#2025-04-18_snippet_1
+
+LANGUAGE: shell
+CODE:
+```
+npm i tailwindcss @tailwindcss/postcss;
+```
+
+LANGUAGE: js
+CODE:
+```
+export default {
+  plugins: ["@tailwindcss/postcss"],
+};
+```
+
+LANGUAGE: css
+CODE:
+```
+@import "tailwindcss";
+```
+
+----------------------------------------
+
+TITLE: Implementing a Chat Notification Card with Tailwind CSS in HTML
+DESCRIPTION: This snippet demonstrates how to create a chat notification card using Tailwind CSS utility classes. It includes styling for layout, colors, typography, and responsive design.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/styling-with-utility-classes.mdx#2025-04-18_snippet_0
+
+LANGUAGE: HTML
+CODE:
+```
+<!-- prettier-ignore -->
+<div class="mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+  <img class="size-12 shrink-0" src="/img/logo.svg" alt="ChitChat Logo" />
+  <div>
+    <div class="text-xl font-medium text-black dark:text-white">ChitChat</div>
+    <p class="text-gray-500 dark:text-gray-400">You have a new message!</p>
+  </div>
+</div>
+```
+
+----------------------------------------
+
+TITLE: Implementing Screen Reader Visibility with TailwindCSS
+DESCRIPTION: Explains how to use `sr-only` to ensure an element is only accessible to screen readers, and `not-sr-only` for reversing this effect on larger screens. This is essential for accessibility in HTML documents.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/display.mdx#2025-04-18_snippet_10
+
+LANGUAGE: HTML
+CODE:
+```
+<a href="#">
+  <svg><!-- ... --></svg>
+  <span class="sr-only">Settings</span>
+</a>
+```
+
+LANGUAGE: HTML
+CODE:
+```
+<a href="#">
+  <svg><!-- ... --></svg>
+  <span class="sr-only sm:not-sr-only">Settings</span>
+</a>
+```
+
+----------------------------------------
+
+TITLE: Rendering Tailwind CSS Pseudo-Class and Pseudo-Element Reference Table in HTML
+DESCRIPTION: This HTML snippet renders a table that maps Tailwind CSS utility classes to their corresponding CSS pseudo-class and pseudo-element selectors. Each row contains a link to the documentation and the CSS equivalent of the Tailwind class.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/hover-focus-and-other-states.mdx#2025-04-18_snippet_72
+
+LANGUAGE: HTML
+CODE:
+```
+<tr>
+  <td>
+    <a href="#nth-last-of-type" className="whitespace-nowrap">
+      nth-last-of-type-[<span className="text-gray-400">...</span>]
+    </a>
+  </td>
+  <td>
+    <code className="whitespace-nowrap before:content-none after:content-none">
+      <span className="text-gray-400">&</span>:nth-last-of-type(<span className="text-gray-400">...</span>)
+    </code>
+  </td>
+</tr>
+<!-- Additional table rows omitted for brevity -->
+<tr>
+  <td>
+    <a href="#responsive-breakpoints" className="whitespace-nowrap">
+      sm
+    </a>
+  </td>
+  <td>
+```
+
+----------------------------------------
+
+TITLE: Basic Hover State in Tailwind CSS
+DESCRIPTION: Example showing how to apply background color change on hover using the hover: prefix with a Tailwind utility class.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/hover-focus-and-other-states.mdx#2025-04-18_snippet_0
+
+LANGUAGE: html
+CODE:
+```
+<!-- [!code classes:hover:bg-sky-700] -->
+<button class="bg-sky-500 hover:bg-sky-700 ...">Save changes</button>
+```
+
+----------------------------------------
+
+TITLE: Implementing Tabs Component in React with Headless UI
+DESCRIPTION: Example of using the new Tab component from Headless UI v1.4 in React. The component provides accessible tab functionality with Tab.Group, Tab.List, Tab, Tab.Panels, and Tab.Panel components.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/blog/headless-ui-v1-4/index.mdx#2025-04-18_snippet_0
+
+LANGUAGE: jsx
+CODE:
+```
+import { Tab } from '@headlessui/react'
+
+function MyTabs() {
+  return (
+    <Tab.Group>
+      <Tab.List>
+        <Tab>Tab 1</Tab>
+        <Tab>Tab 2</Tab>
+        <Tab>Tab 3</Tab>
+      </Tab.List>
+      <Tab.Panels>
+        <Tab.Panel>Content 1</Tab.Panel>
+        <Tab.Panel>Content 2</Tab.Panel>
+        <Tab.Panel>Content 3</Tab.Panel>
+      </Tab.Panels>
+    </Tab.Group>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Using Arbitrary Variants in Tailwind CSS
+DESCRIPTION: Shows how to use arbitrary variants to create custom selector variants directly in HTML, including stacking with built-in variants.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/hover-focus-and-other-states.mdx#2025-04-18_snippet_66
+
+LANGUAGE: svelte
+CODE:
+```
+<ul role="list">
+  {#each items as item}
+    <li class="[&.is-dragging]:cursor-grabbing">{item}</li>
+  {/each}
+</ul>
+```
+
+----------------------------------------
+
+TITLE: Using Arbitrary Values in CSS Utility
+DESCRIPTION: This CSS snippet demonstrates how to support arbitrary values within a CSS utility. The `--value([{type}])` syntax enables users to specify any value of a supported type (in this case, integer) using square brackets.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/adding-custom-styles.mdx#2025-04-18_snippet_14
+
+LANGUAGE: css
+CODE:
+```
+/* [!code filename:CSS] */
+@utility tab-* {
+  tab-size: --value([integer]);
+}
+```
+
+----------------------------------------
+
+TITLE: Styling for Dark Mode in Tailwind CSS
+DESCRIPTION: Illustrates how to use the dark: prefix to apply styles specifically for dark mode. The example includes multiple dark mode styles for a card component.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/styling-with-utility-classes.mdx#2025-04-18_snippet_8
+
+LANGUAGE: html
+CODE:
+```
+<div class="bg-white dark:bg-gray-800 rounded-lg px-6 py-8 ring shadow-xl ring-gray-900/5">
+  <div>
+    <span class="inline-flex items-center justify-center rounded-md bg-indigo-500 p-2 shadow-lg">
+      <svg
+        class="h-6 w-6 text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <!-- ... -->
+      </svg>
+    </span>
+  </div>
+  <h3 class="text-gray-900 dark:text-white mt-5 text-base font-medium tracking-tight ">Writes upside-down</h3>
+  <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm ">
+    The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer space.
+  </p>
+</div>
+```
+
+----------------------------------------
+
+TITLE: Implementing Simplified Transition in Headless UI - React JavaScript
+DESCRIPTION: This snippet demonstrates using the new `transition` prop in Headless UI v2.1 for React. It simplifies adding transitions to components by utilizing new data attributes to define transition stages. This requires importing components from `@headlessui/react`.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/blog/2024-06-21-headless-ui-v2-1/index.mdx#2025-04-18_snippet_0
+
+LANGUAGE: JavaScript
+CODE:
+```
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+
+function Example() {
+  return (
+    <Menu>
+      <MenuButton>My account</MenuButton>
+      <MenuItems
+        // [!code highlight:7]
+        transition
+        className={`
+          transition ease-out
+          data-[closed]:scale-95 data-[closed]:opacity-0
+          data-[enter]:duration-200 data-[leave]:duration-300
+        `}
+      >
+        {/* Menu items… */}
+      </MenuItems>
+    </Menu>
+  );
+}
+```
+
+----------------------------------------
+
+TITLE: Removing Default Breakpoints in Tailwind
+DESCRIPTION: Shows how to remove default breakpoints using the initial keyword and theme variables.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/responsive-design.mdx#2025-04-18_snippet_9
+
+LANGUAGE: css
+CODE:
+```
+@import "tailwindcss";
+
+@theme {
+  --breakpoint-2xl: initial;
+}
+```
+
+----------------------------------------
+
+TITLE: Container Query Styling with Tailwind CSS
+DESCRIPTION: This example shows how to use container queries in Tailwind CSS to style elements based on the width of a parent container rather than the viewport. It changes the flex direction at different container sizes.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/hover-focus-and-other-states.mdx#2025-04-18_snippet_35
+
+LANGUAGE: html
+CODE:
+```
+<div class="@container">
+  <div class="flex flex-col @md:flex-row">
+    <!-- ... -->
+  </div>
+</div>
+```
+
+----------------------------------------
+
+TITLE: Targeting Child Elements with Arbitrary Variants in Tailwind CSS
+DESCRIPTION: Demonstrates how to use arbitrary variants to target all child elements of a container, applying multiple style utilities to each child element.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/blog/tailwindcss-v3-1/index.mdx#2025-04-18_snippet_22
+
+LANGUAGE: html
+CODE:
+```
+<!-- [!code word:[&>*\]\:p-4] -->
+<!-- [!code word:[&>*\]\:bg-white] -->
+<!-- [!code word:[&>*\]\:rounded-lg] -->
+<!-- [!code word:[&>*\]\:shadow] -->
+<ul role="list" class="space-y-4 [&>*]:rounded-lg [&>*]:bg-white [&>*]:p-4 [&>*]:shadow">
+  <li class="flex">
+    <img class="h-10 w-10 rounded-full" src="..." alt="" />
+    <div class="ml-3 overflow-hidden">
+      <p class="text-sm font-medium text-slate-900">Kristen Ramos</p>
+      <p class="truncate text-sm text-slate-500">kristen.ramos@example.com</p>
+    </div>
+  </li>
+  <!-- ... -->
+</ul>
+```
+
+----------------------------------------
+
+TITLE: Using Inline Styles in JSX with Tailwind CSS
+DESCRIPTION: This snippet shows how to use inline styles in a React functional component `BrandedButton`, allowing the background and text colors to be set dynamically based on props. This is useful for using values from external sources.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/styling-with-utility-classes.mdx#2025-04-18_snippet_20
+
+LANGUAGE: jsx
+CODE:
+```
+export function BrandedButton({ buttonColor, textColor, children }) {
+  return (
+    <button
+      style={{
+        // [!code highlight:3]
+        backgroundColor: buttonColor,
+        color: textColor,
+      }}
+      className="rounded-md px-3 py-1.5 font-medium"
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+----------------------------------------
+
+TITLE: Using place-items-center in Tailwind CSS Grid
+DESCRIPTION: Example of using place-items-center to position grid items at the center of their grid areas on both axes. This creates a layout where items are centered horizontally and vertically within their respective cells.
+SOURCE: https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/place-items.mdx#2025-04-18_snippet_2
+
+LANGUAGE: html
+CODE:
+```
+<div class="grid h-56 grid-cols-3 place-items-center gap-4 ...">
+  <div>01</div>
+  <div>02</div>
+  <div>03</div>
+  <div>04</div>
+  <div>05</div>
+  <div>06</div>
+</div>
+```

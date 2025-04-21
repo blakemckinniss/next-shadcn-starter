@@ -1,0 +1,983 @@
+TITLE: Creating Root Layout in Next.js
+DESCRIPTION: This snippet shows how to implement the required root layout in a Next.js application. It defines the RootLayout component that includes the html and body tags, which is necessary for all routes in the app directory.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/01-routing/03-layouts-and-templates.mdx#2025-04-20_snippet_1
+
+LANGUAGE: typescript
+CODE:
+```
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>
+        {/* Layout UI */}
+        <main>{children}</main>
+      </body>
+    </html>
+  )
+}
+```
+
+LANGUAGE: javascript
+CODE:
+```
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {/* Layout UI */}
+        <main>{children}</main>
+      </body>
+    </html>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Using Link Component in Next.js
+DESCRIPTION: Demonstrates how to use the built-in Link component for client-side navigation between routes. This is the recommended primary method for navigation in Next.js applications.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/01-routing/04-linking-and-navigating.mdx#2025-04-20_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+import Link from 'next/link'
+
+export default function Page() {
+  return <Link href="/dashboard">Dashboard</Link>
+}
+```
+
+LANGUAGE: javascript
+CODE:
+```
+import Link from 'next/link'
+
+export default function Page() {
+  return <Link href="/dashboard">Dashboard</Link>
+}
+```
+
+----------------------------------------
+
+TITLE: Using Server Actions in Client Components
+DESCRIPTION: Example showing how to import and use Server Actions in a Client Component by calling them from event handlers.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/02-data-fetching/03-server-actions-and-mutations.mdx#2025-04-20_snippet_2
+
+LANGUAGE: tsx
+CODE:
+```
+'use client'
+
+import { create } from './actions'
+
+export function Button() {
+  return <button onClick={() => create()}>Create</button>
+}
+```
+
+LANGUAGE: jsx
+CODE:
+```
+'use client'
+
+import { create } from './actions'
+
+export function Button() {
+  return <button onClick={() => create()}>Create</button>
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing Streaming with React Suspense in Next.js
+DESCRIPTION: This code demonstrates how to use React Suspense to implement streaming in a Next.js dashboard page. It wraps PostFeed and Weather components in Suspense boundaries with loading fallbacks, allowing components to load independently.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/01-routing/06-loading-ui-and-streaming.mdx#2025-04-20_snippet_1
+
+LANGUAGE: tsx
+CODE:
+```
+import { Suspense } from 'react'
+import { PostFeed, Weather } from './Components'
+
+export default function Posts() {
+  return (
+    <section>
+      <Suspense fallback={<p>Loading feed...</p>}>
+        <PostFeed />
+      </Suspense>
+      <Suspense fallback={<p>Loading weather...</p>}>
+        <Weather />
+      </Suspense>
+    </section>
+  )
+}
+```
+
+LANGUAGE: jsx
+CODE:
+```
+import { Suspense } from 'react'
+import { PostFeed, Weather } from './Components'
+
+export default function Posts() {
+  return (
+    <section>
+      <Suspense fallback={<p>Loading feed...</p>}>
+        <PostFeed />
+      </Suspense>
+      <Suspense fallback={<p>Loading weather...</p>}>
+        <Weather />
+      </Suspense>
+    </section>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Reusing Data Across Functions in Next.js (TypeScript)
+DESCRIPTION: This snippet demonstrates how to fetch and reuse data across multiple functions in a Next.js application using TypeScript. It includes examples of generateStaticParams, generateMetadata, and the main Page component, all using the same fetched data.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/02-data-fetching/01-fetching.mdx#2025-04-20_snippet_4
+
+LANGUAGE: typescript
+CODE:
+```
+import { notFound } from 'next/navigation'
+
+interface Post {
+  id: string
+  title: string
+  content: string
+}
+
+async function getPost(id: string) {
+  const res = await fetch(`https://api.vercel.app/blog/${id}`, {
+    cache: 'force-cache',
+  })
+  const post: Post = await res.json()
+  if (!post) notFound()
+  return post
+}
+
+export async function generateStaticParams() {
+  const posts = await fetch('https://api.vercel.app/blog', {
+    cache: 'force-cache',
+  }).then((res) => res.json())
+
+  return posts.map((post: Post) => ({
+    id: String(post.id),
+  }))
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  const post = await getPost(id)
+
+  return {
+    title: post.title,
+  }
+}
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  const post = await getPost(id)
+
+  return (
+    <article>
+      <h1>{post.title}</h1>
+      <p>{post.content}</p>
+    </article>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Parallel Data Fetching in Next.js (JavaScript)
+DESCRIPTION: This snippet demonstrates parallel data fetching in Next.js using JavaScript. It shows how to fetch artist and album data simultaneously using Promise.all for better performance.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/02-data-fetching/01-fetching.mdx#2025-04-20_snippet_10
+
+LANGUAGE: javascript
+CODE:
+```
+import Albums from './albums'
+
+async function getArtist(username) {
+  const res = await fetch(`https://api.example.com/artist/${username}`)
+  return res.json()
+}
+
+async function getAlbums(username) {
+  const res = await fetch(`https://api.example.com/artist/${username}/albums`)
+  return res.json()
+}
+
+export default async function Page({ params }) {
+  const { username } = await params
+  const artistData = getArtist(username)
+  const albumsData = getAlbums(username)
+
+  // Initiate both requests in parallel
+  const [artist, albums] = await Promise.all([artistData, albumsData])
+
+  return (
+    <>
+      <h1>{artist.name}</h1>
+      <Albums list={albums} />
+    </>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Securing Route Handlers with Authentication and Authorization in Next.js
+DESCRIPTION: This code snippet shows how to implement authentication and authorization checks in a Next.js route handler. It verifies the user's session and role, returning appropriate HTTP status codes for unauthenticated or unauthorized access attempts.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/09-authentication/index.mdx#2025-04-20_snippet_21
+
+LANGUAGE: typescript
+CODE:
+```
+import { verifySession } from '@/app/lib/dal'
+
+export async function GET() {
+  // User authentication and role verification
+  const session = await verifySession()
+
+  // Check if the user is authenticated
+  if (!session) {
+    // User is not authenticated
+    return new Response(null, { status: 401 })
+  }
+
+  // Check if the user has the 'admin' role
+  if (session.user.role !== 'admin') {
+    // User is authenticated but does not have the right permissions
+    return new Response(null, { status: 403 })
+  }
+
+  // Continue for authorized users
+}
+```
+
+LANGUAGE: javascript
+CODE:
+```
+import { verifySession } from '@/app/lib/dal'
+
+export async function GET() {
+  // User authentication and role verification
+  const session = await verifySession()
+
+  // Check if the user is authenticated
+  if (!session) {
+    // User is not authenticated
+    return new Response(null, { status: 401 })
+  }
+
+  // Check if the user has the 'admin' role
+  if (session.user.role !== 'admin') {
+    // User is authenticated but does not have the right permissions
+    return new Response(null, { status: 403 })
+  }
+
+  // Continue for authorized users
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing Server Action with Role-Based Authorization in Next.js
+DESCRIPTION: This code snippet demonstrates how to implement a server action in Next.js with role-based authorization. It checks the user's role before allowing the action to proceed, ensuring only authorized users (admins in this case) can perform the action.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/09-authentication/index.mdx#2025-04-20_snippet_20
+
+LANGUAGE: typescript
+CODE:
+```
+'use server'
+import { verifySession } from '@/app/lib/dal'
+
+export async function serverAction(formData: FormData) {
+  const session = await verifySession()
+  const userRole = session?.user?.role
+
+  // Return early if user is not authorized to perform the action
+  if (userRole !== 'admin') {
+    return null
+  }
+
+  // Proceed with the action for authorized users
+}
+```
+
+LANGUAGE: javascript
+CODE:
+```
+'use server'
+import { verifySession } from '@/app/lib/dal'
+
+export async function serverAction() {
+  const session = await verifySession()
+  const userRole = session.user.role
+
+  // Return early if user is not authorized to perform the action
+  if (userRole !== 'admin') {
+    return null
+  }
+
+  // Proceed with the action for authorized users
+}
+```
+
+----------------------------------------
+
+TITLE: Server-Only Module Protection
+DESCRIPTION: Implementation of server-only package to prevent server-side code from being executed on the client.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/03-rendering/03-composition-patterns.mdx#2025-04-20_snippet_1
+
+LANGUAGE: javascript
+CODE:
+```
+import 'server-only'
+
+export async function getData() {
+  const res = await fetch('https://external-service.com/data', {
+    headers: {
+      authorization: process.env.API_KEY,
+    },
+  })
+
+  return res.json()
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing Root Layout in Next.js
+DESCRIPTION: Shows how to create a root layout component that wraps all pages and includes required HTML structure
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/01-getting-started/03-layouts-and-pages.mdx#2025-04-20_snippet_1
+
+LANGUAGE: typescript
+CODE:
+```
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>
+        {/* Layout UI */}
+        {/* Place children where you want to render a page or nested layout */}
+        <main>{children}</main>
+      </body>
+    </html>
+  )
+}
+```
+
+LANGUAGE: javascript
+CODE:
+```
+export default function DashboardLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {/* Layout UI */}
+        {/* Place children where you want to render a page or nested layout */}
+        <main>{children}</main>
+      </body>
+    </html>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Fetching Data with fetch API in Server Components
+DESCRIPTION: Demonstrates how to fetch data in a Next.js Server Component using the fetch API. The component is made asynchronous to await the fetch call and render a list of blog posts.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/01-getting-started/06-fetching-data.mdx#2025-04-20_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+export default async function Page() {
+  const data = await fetch('https://api.vercel.app/blog')
+  const posts = await data.json()
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+LANGUAGE: jsx
+CODE:
+```
+export default async function Page() {
+  const data = await fetch('https://api.vercel.app/blog')
+  const posts = await data.json()
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing a Client Component Counter with useState in Next.js
+DESCRIPTION: This example demonstrates how to create a basic Client Component in Next.js by adding the 'use client' directive at the top of the file. The component implements a simple counter using React's useState hook to track clicks and update the UI interactively.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/03-rendering/02-client-components.mdx#2025-04-20_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+'use client'
+
+import { useState } from 'react'
+
+export default function Counter() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  )
+}
+```
+
+LANGUAGE: jsx
+CODE:
+```
+'use client'
+
+import { useState } from 'react'
+
+export default function Counter() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Installing Next.js with create-next-app CLI
+DESCRIPTION: Command to initialize a new Next.js project using the create-next-app CLI tool, which provides an interactive setup experience with various configuration options.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/01-getting-started/01-installation.mdx#2025-04-20_snippet_0
+
+LANGUAGE: bash
+CODE:
+```
+npx create-next-app@latest
+```
+
+----------------------------------------
+
+TITLE: Using the Next.js Image Component in JSX
+DESCRIPTION: Demonstrates basic usage of the Next.js Image Component with required props. The component is imported from 'next/image' and used to display an optimized image.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/05-api-reference/02-components/image.mdx#2025-04-20_snippet_0
+
+LANGUAGE: jsx
+CODE:
+```
+import Image from 'next/image'
+
+export default function Page() {
+  return (
+    <Image
+      src="/profile.png"
+      width={500}
+      height={500}
+      alt="Picture of the author"
+    />
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Creating a User Data Fetching Function in Next.js DAL
+DESCRIPTION: Implements a getUser function in the Data Access Layer that first verifies the user's session and then queries the database for specific user data. It protects database queries by ensuring the session is valid before accessing user data.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/09-authentication/index.mdx#2025-04-20_snippet_15
+
+LANGUAGE: typescript
+CODE:
+```
+export const getUser = cache(async () => {
+  const session = await verifySession()
+  if (!session) return null
+
+  try {
+    const data = await db.query.users.findMany({
+      where: eq(users.id, session.userId),
+      // Explicitly return the columns you need rather than the whole user object
+      columns: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    })
+
+    const user = data[0]
+
+    return user
+  } catch (error) {
+    console.log('Failed to fetch user')
+    return null
+  }
+})
+```
+
+LANGUAGE: javascript
+CODE:
+```
+export const getUser = cache(async () => {
+  const session = await verifySession()
+  if (!session) return null
+
+  try {
+    const data = await db.query.users.findMany({
+      where: eq(users.id, session.userId),
+      // Explicitly return the columns you need rather than the whole user object
+      columns: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    })
+
+    const user = data[0]
+
+    return user
+  } catch (error) {
+    console.log('Failed to fetch user')
+    return null
+  }
+})
+```
+
+----------------------------------------
+
+TITLE: Using useSelectedLayoutSegment for Parallel Routes in Next.js
+DESCRIPTION: This snippet shows how to use the useSelectedLayoutSegment hook to read the active route segment within a slot for parallel routes in Next.js.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/01-routing/11-parallel-routes.mdx#2025-04-20_snippet_1
+
+LANGUAGE: tsx
+CODE:
+```
+'use client'
+
+import { useSelectedLayoutSegment } from 'next/navigation'
+
+export default function Layout({ auth }: { auth: React.ReactNode }) {
+  const loginSegment = useSelectedLayoutSegment('auth')
+  // ...
+}
+```
+
+LANGUAGE: jsx
+CODE:
+```
+'use client'
+
+import { useSelectedLayoutSegment } from 'next/navigation'
+
+export default function Layout({ auth }) {
+  const loginSegment = useSelectedLayoutSegment('auth')
+  // ...
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing generateMetadata Function in Next.js
+DESCRIPTION: This snippet demonstrates how to implement the generateMetadata function for dynamic metadata in Next.js. It shows how to use route parameters, fetch data, and extend parent metadata. Examples are provided for both TypeScript and JavaScript.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/05-api-reference/04-functions/generate-metadata.mdx#2025-04-20_snippet_2
+
+LANGUAGE: tsx
+CODE:
+```
+import type { Metadata, ResolvingMetadata } from 'next'
+
+type Props = {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  const { id } = await params
+
+  // fetch data
+  const product = await fetch(`https://.../${id}`).then((res) => res.json())
+
+  // optionally access and extend (rather than replace) parent metadata
+  const previousImages = (await parent).openGraph?.images || []
+
+  return {
+    title: product.title,
+    openGraph: {
+      images: ['/some-specific-page-image.jpg', ...previousImages],
+    },
+  }
+}
+
+export default function Page({ params, searchParams }: Props) {}
+```
+
+LANGUAGE: jsx
+CODE:
+```
+export async function generateMetadata({ params, searchParams }, parent) {
+  // read route params
+  const { id } = await params
+
+  // fetch data
+  const product = await fetch(`https://.../${id}`).then((res) => res.json())
+
+  // optionally access and extend (rather than replace) parent metadata
+  const previousImages = (await parent).openGraph?.images || []
+
+  return {
+    title: product.title,
+    openGraph: {
+      images: ['/some-specific-page-image.jpg', ...previousImages],
+    },
+  }
+}
+
+export default function Page({ params, searchParams }) {}
+```
+
+----------------------------------------
+
+TITLE: Combining React cache, Preload Pattern, and server-only in Next.js (TypeScript)
+DESCRIPTION: This snippet demonstrates how to create a data fetching utility using React's cache function, the preload pattern, and the server-only package in a Next.js application.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/02-data-fetching/01-fetching.mdx#2025-04-20_snippet_15
+
+LANGUAGE: typescript
+CODE:
+```
+import { cache } from 'react'
+import 'server-only'
+
+export const preload = (id: string) => {
+  void getItem(id)
+}
+
+export const getItem = cache(async (id: string) => {
+  // ...
+})
+```
+
+----------------------------------------
+
+TITLE: Implementing Like Button with Server Action in Next.js
+DESCRIPTION: React component demonstrating Server Action usage with onClick event handler to increment likes count. Uses useState for local state management and async function for server interaction.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/02-data-fetching/03-server-actions-and-mutations.mdx#2025-04-20_snippet_14
+
+LANGUAGE: typescript
+CODE:
+```
+'use client'
+
+import { incrementLike } from './actions'
+import { useState } from 'react'
+
+export default function LikeButton({ initialLikes }: { initialLikes: number }) {
+  const [likes, setLikes] = useState(initialLikes)
+
+  return (
+    <>
+      <p>Total Likes: {likes}</p>
+      <button
+        onClick={async () => {
+          const updatedLikes = await incrementLike()
+          setLikes(updatedLikes)
+        }}
+      >
+        Like
+      </button>
+    </>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Sequential Data Fetching in Next.js (TypeScript)
+DESCRIPTION: This snippet illustrates sequential data fetching in Next.js using TypeScript. It shows how to fetch artist information and then use that data to fetch playlists, demonstrating the use of Suspense for loading states.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/02-data-fetching/01-fetching.mdx#2025-04-20_snippet_7
+
+LANGUAGE: typescript
+CODE:
+```
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ username: string }>
+}) {
+  const { username } = await params
+  // Get artist information
+  const artist = await getArtist(username)
+
+  return (
+    <>
+      <h1>{artist.name}</h1>
+      {/* Show fallback UI while the Playlists component is loading */}
+      <Suspense fallback={<div>Loading...</div>}>
+        {/* Pass the artist ID to the Playlists component */}
+        <Playlists artistID={artist.id} />
+      </Suspense>
+    </>
+  )
+}
+
+async function Playlists({ artistID }: { artistID: string }) {
+  // Use the artist ID to fetch playlists
+  const playlists = await getArtistPlaylists(artistID)
+
+  return (
+    <ul>
+      {playlists.map((playlist) => (
+        <li key={playlist.id}>{playlist.name}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing getUser Function with Session Verification in Next.js DAL
+DESCRIPTION: Shows a simplified implementation of the getUser function in the Data Access Layer that verifies the user's session before proceeding with data fetching. This pattern ensures authentication checks are performed consistently.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/03-building-your-application/09-authentication/index.mdx#2025-04-20_snippet_19
+
+LANGUAGE: typescript
+CODE:
+```
+export const getUser = cache(async () => {
+  const session = await verifySession()
+  if (!session) return null
+
+  // Get user ID from session and fetch data
+})
+```
+
+LANGUAGE: javascript
+CODE:
+```
+export const getUser = cache(async () => {
+  const session = await verifySession()
+  if (!session) return null
+
+  // Get user ID from session and fetch data
+})
+```
+
+----------------------------------------
+
+TITLE: Server Component Passing Promise to Client Component for Streaming
+DESCRIPTION: Demonstrates how to fetch data in a Server Component and pass the promise to a Client Component for streaming. Uses Suspense for handling the loading state.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/01-getting-started/06-fetching-data.mdx#2025-04-20_snippet_2
+
+LANGUAGE: tsx
+CODE:
+```
+import Posts from '@/app/ui/posts
+import { Suspense } from 'react'
+
+export default function Page() {
+  // Don't await the data fetching function
+  const posts = getPosts()
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Posts posts={posts} />
+    </Suspense>
+  )
+}
+```
+
+LANGUAGE: jsx
+CODE:
+```
+import Posts from '@/app/ui/posts
+import { Suspense } from 'react'
+
+export default function Page() {
+  // Don't await the data fetching function
+  const posts = getPosts()
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Posts posts={posts} />
+    </Suspense>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing Error Boundary Class Component in React
+DESCRIPTION: This code snippet demonstrates how to create an ErrorBoundary class component in React. It handles errors by displaying a fallback UI and provides a way to reset the application state.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/02-pages/03-building-your-application/06-configuring/12-error-handling.mdx#2025-04-20_snippet_0
+
+LANGUAGE: jsx
+CODE:
+```
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props)
+
+    // Define a state variable to track whether is an error or not
+    this.state = { hasError: false }
+  }
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI
+
+    return { hasError: true }
+  }
+  componentDidCatch(error, errorInfo) {
+    // You can use your own error logging service here
+    console.log({ error, errorInfo })
+  }
+  render() {
+    // Check if the error is thrown
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return (
+        <div>
+          <h2>Oops, there is an error!</h2>
+          <button
+            type="button"
+            onClick={() => this.setState({ hasError: false })}
+          >
+            Try again?
+          </button>
+        </div>
+      )
+    }
+
+    // Return children components in case of no error
+
+    return this.props.children
+  }
+}
+
+export default ErrorBoundary
+```
+
+----------------------------------------
+
+TITLE: Multiple Dynamic Segments Generation
+DESCRIPTION: Demonstrates generating static paths for routes with multiple dynamic segments [category] and [product].
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/05-api-reference/04-functions/generate-static-params.mdx#2025-04-20_snippet_2
+
+LANGUAGE: typescript
+CODE:
+```
+export function generateStaticParams() {
+  return [
+    { category: 'a', product: '1' },
+    { category: 'b', product: '2' },
+    { category: 'c', product: '3' },
+  ]
+}
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ category: string; product: string }>
+}) {
+  const { category, product } = await params
+  // ...
+}
+```
+
+LANGUAGE: javascript
+CODE:
+```
+export function generateStaticParams() {
+  return [
+    { category: 'a', product: '1' },
+    { category: 'b', product: '2' },
+    { category: 'c', product: '3' },
+  ]
+}
+
+export default async function Page({ params }) {
+  const { category, product } = await params
+  // ...
+}
+```
+
+----------------------------------------
+
+TITLE: Responding to Route Changes with usePathname and useSearchParams
+DESCRIPTION: An example showing how to use usePathname and useSearchParams together to respond to route changes in a Next.js application. This pattern allows for executing side effects when either the pathname or search parameters change.
+SOURCE: https://github.com/vercel/next.js/blob/canary/docs/01-app/05-api-reference/04-functions/use-pathname.mdx#2025-04-20_snippet_2
+
+LANGUAGE: tsx
+CODE:
+```
+'use client'
+
+import { usePathname, useSearchParams } from 'next/navigation'
+
+function ExampleClientComponent() {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  useEffect(() => {
+    // Do something here...
+  }, [pathname, searchParams])
+}
+```
+
+LANGUAGE: jsx
+CODE:
+```
+'use client'
+
+import { usePathname, useSearchParams } from 'next/navigation'
+
+function ExampleClientComponent() {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  useEffect(() => {
+    // Do something here...
+  }, [pathname, searchParams])
+}
+```

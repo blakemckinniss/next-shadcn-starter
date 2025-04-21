@@ -1,0 +1,557 @@
+TITLE: Implementing index.js for a New Locale in date-fns
+DESCRIPTION: This snippet shows how to create the index.js file for a new locale in date-fns. It includes importing necessary functions, setting locale metadata, and exporting the locale object.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/i18nContributionGuide.md#2025-04-17_snippet_0
+
+LANGUAGE: javascript
+CODE:
+```
+import formatDistance from "./_lib/formatDistance/index.js";
+import formatLong from "./_lib/formatLong/index.js";
+import formatRelative from "./_lib/formatRelative/index.js";
+import localize from "./_lib/localize/index.js";
+import match from "./_lib/match/index.js";
+
+/**
+ * @type {Locale}
+ * @category Locales
+ *
+ * // Name of the locale.
+ * // Inside the parentheses - name of the country - if the locale uses the four letter code, e.g. en-US, fr-CA or pt-BR.
+ * @summary English locale (United States).
+ *
+ * // Name of the language (used by https://date-fns.org/ website)
+ * @language English
+ *
+ * // ISO 639-2 code. See the list here:
+ * // https://www.loc.gov/standards/iso639-2/php/code_list.php
+ * // Used by https://date-fns.org/ to detect the list of the countries that uses the language.
+ * @iso-639-2 eng
+ *
+ * // Authors of the locale (including anyone who corrected or fixed the locale)
+ * @author Sasha Koss [@kossnocorp]{@link https://github.com/kossnocorp}
+ * @author Lesha Koss [@leshakoss]{@link https://github.com/leshakoss}
+ */
+var locale = {
+  code: "en",
+  formatDistance: formatDistance,
+  formatLong: formatLong,
+  formatRelative: formatRelative,
+  localize: localize,
+  match: match,
+  options: {
+    // Index of the first day of the week.
+    // Sunday is 0, Monday is 1, Saturday is 6.
+    weekStartsOn: 0,
+
+    // Nth of January which is always in the first week of the year. See:
+    // https://en.wikipedia.org/wiki/Week#The_ISO_week_date_system
+    // http://www.pjh2.de/datetime/weeknumber/wnd.php?l=en
+    firstWeekContainsDate: 1,
+  },
+};
+
+export default locale;
+```
+
+----------------------------------------
+
+TITLE: Importing and Using date-fns for Date Formatting and Comparison in JavaScript
+DESCRIPTION: This example demonstrates how to import specific functions from date-fns, format a date in 'yyyy-MM-dd' pattern, and sort an array of dates in ascending order using the compareAsc function.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/README.md#2025-04-17_snippet_0
+
+LANGUAGE: javascript
+CODE:
+```
+import { compareAsc, format } from "date-fns";
+
+format(new Date(2014, 1, 11), "yyyy-MM-dd");
+//=> '2014-02-11'
+
+const dates = [
+  new Date(1995, 6, 2),
+  new Date(1987, 1, 11),
+  new Date(1989, 6, 10),
+];
+dates.sort(compareAsc);
+//=> [
+//   Wed Feb 11 1987 00:00:00,
+//   Mon Jul 10 1989 00:00:00,
+//   Sun Jul 02 1995 00:00:00
+// ]
+```
+
+----------------------------------------
+
+TITLE: Creating an en-GB Locale by Extending en-US in date-fns
+DESCRIPTION: This example demonstrates how to create a new locale (en-GB) by reusing components from an existing locale (en-US) while only implementing unique properties. The implementation imports shared formatting functions from en-US and adds GB-specific formatting and options.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/i18nContributionGuide.md#2025-04-17_snippet_22
+
+LANGUAGE: javascript
+CODE:
+```
+// Same as en-US
+import formatDistance from "../en-US/_lib/formatDistance/index.js";
+import formatRelative from "../en-US/_lib/formatRelative/index.js";
+import localize from "../en-US/_lib/localize/index.js";
+import match from "../en-US/_lib/match/index.js";
+
+// Unique for en-GB
+import formatLong from "./_lib/formatLong/index.js";
+
+/**
+ * @type {Locale}
+ * @category Locales
+ * @summary English locale (United Kingdom).
+ * @language English
+ * @iso-639-2 eng
+ * @author John Doe [@example]{@link https://github.com/example}
+ */
+var locale = {
+  formatDistance: formatDistance,
+  formatLong: formatLong,
+  formatRelative: formatRelative,
+  localize: localize,
+  match: match,
+
+  // Unique for en-GB
+  options: {
+    weekStartsOn: 1,
+    firstWeekContainsDate: 4,
+  },
+};
+
+export default locale;
+```
+
+----------------------------------------
+
+TITLE: Importing Functions from date-fns Submodules in JavaScript
+DESCRIPTION: This snippet shows how to import functions from the main date-fns module and its FP (functional programming) submodule.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/gettingStarted.md#2025-04-17_snippet_1
+
+LANGUAGE: javascript
+CODE:
+```
+// The main submodule:
+import { addDays } from "date-fns";
+
+// FP variation:
+import { addDays, format } from "date-fns/fp";
+```
+
+----------------------------------------
+
+TITLE: Creating a Locale-Aware Format Wrapper for date-fns
+DESCRIPTION: Shows how to create a wrapper function that simplifies locale switching when formatting dates. The wrapper imports multiple locales, stores the current locale in a global variable, and applies it automatically to all date formatting operations.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/i18n.md#2025-04-17_snippet_1
+
+LANGUAGE: javascript
+CODE:
+```
+// app/_lib/format.js
+
+import { format } from "date-fns";
+import { enGB, eo, ru } from "date-fns/locale";
+
+const locales = { enGB, eo, ru };
+
+// by providing a default string of 'PP' or any of its variants for `formatStr`
+// it will format dates in whichever way is appropriate to the locale
+export default function (date, formatStr = "PP") {
+  return format(date, formatStr, {
+    locale: locales[window.__localeId__], // or global.__localeId__
+  });
+}
+
+// Later:
+
+import format from "app/_lib/format";
+
+window.__localeId__ = "enGB";
+format(friday13, "EEEE d");
+//=> 'Friday 13'
+
+window.__localeId__ = "eo";
+format(friday13, "EEEE d");
+//=> 'vendredo 13'
+
+// If the format string is omitted, it will take the default for the locale.
+window.__localeId__ = "enGB";
+format(friday13);
+//=> Jul 13, 2019
+
+window.__localeId__ = "eo";
+format(friday13);
+//=> 2019-jul-13
+```
+
+----------------------------------------
+
+TITLE: Using formatDistance and subDays Functions from date-fns in JavaScript
+DESCRIPTION: This snippet shows how to import and use the formatDistance and subDays functions from date-fns to calculate and format the difference between two dates.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/gettingStarted.md#2025-04-17_snippet_3
+
+LANGUAGE: javascript
+CODE:
+```
+import { formatDistance, subDays } from "date-fns";
+
+formatDistance(subDays(new Date(), 3), new Date(), { addSuffix: true });
+//=> "3 days ago"
+```
+
+----------------------------------------
+
+TITLE: Formatting and Comparing Dates with date-fns in JavaScript
+DESCRIPTION: This snippet demonstrates how to use the format and compareAsc functions from date-fns to format a date and sort an array of dates in ascending order.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/gettingStarted.md#2025-04-17_snippet_0
+
+LANGUAGE: javascript
+CODE:
+```
+import { format, compareAsc } from "date-fns";
+
+format(new Date(2014, 1, 11), "MM/dd/yyyy");
+//=> '02/11/2014'
+
+const dates = [
+  new Date(1995, 6, 2),
+  new Date(1987, 1, 11),
+  new Date(1989, 6, 10),
+];
+dates.sort(compareAsc);
+//=> [
+//   Wed Feb 11 1987 00:00:00,
+//   Mon Jul 10 1989 00:00:00,
+//   Sun Jul 02 1995 00:00:00
+// ]
+```
+
+----------------------------------------
+
+TITLE: Formatting Relative Date Representations
+DESCRIPTION: Generates human-readable relative date strings based on proximity to a reference date
+SOURCE: https://github.com/date-fns/date-fns/blob/main/src/locale/en-US/snapshot.md#2025-04-17_snippet_3
+
+LANGUAGE: markdown
+CODE:
+```
+## `formatRelative`
+
+If now is January 1st, 2000, 00:00.
+```
+
+----------------------------------------
+
+TITLE: Installing date-fns via npm
+DESCRIPTION: This snippet shows the npm command to install date-fns as a project dependency. The --save flag ensures the dependency is added to package.json.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/README.md#2025-04-17_snippet_1
+
+LANGUAGE: bash
+CODE:
+```
+npm install date-fns --save
+```
+
+----------------------------------------
+
+TITLE: Using TZDate Extension with date-fns Functions
+DESCRIPTION: Demonstrates how to use TZDate extension to handle DST transitions correctly across different time zones. Shows the difference between system time zone and specified time zone behavior.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/timeZones.md#2025-04-17_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+import { TZDate } from "@date-fns/tz";
+import { addHours } from "date-fns";
+
+// Given that the system time zone is America/Los_Angeles
+// where DST happens on Sunday, 13 March 2022, 02:00:00
+
+// Using the system time zone will produce 03:00 instead of 02:00 because of DST:
+const date = new Date(2022, 2, 13);
+addHours(date, 2).toString();
+//=> 'Sun Mar 13 2022 03:00:00 GMT-0700 (Pacific Daylight Time)'
+
+// Using Asia/Singapore will provide the expected 02:00:
+const tzDate = new TZDate(2022, 2, 13, "Asia/Singapore");
+addHours(tzDate, 2).toString();
+//=> 'Sun Mar 13 2022 02:00:00 GMT+0800 (Singapore Standard Time)'
+```
+
+----------------------------------------
+
+TITLE: Transposing Date Values Between Time Zones
+DESCRIPTION: Shows how to transpose date values between different time zones while maintaining the same local time using the transpose function.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/timeZones.md#2025-04-17_snippet_4
+
+LANGUAGE: typescript
+CODE:
+```
+import { transpose } from "date-fns";
+import { tz } from "@date-fns/tz";
+
+// Singapore is the system time zone:
+const sgDate = new Date(2024, 8 /* Sep */, 7, 6, 5, 4);
+//=> 'Wed Sep 07 2024 06:05:04 GMT+0800 (Singapore Standard Time)'
+
+// Transpose the date to Los Angeles time zone:
+const laDate = transpose(sgDate, tz("America/Los_Angeles"));
+//=> 'Wed Sep 07 2024 06:05:04 GMT-0700 (Pacific Daylight Time)'
+
+// Transpose back to local time zone using Date:
+const systemDate = transpose(laDate, Date);
+//=> 'Wed Sep 07 2024 06:05:04 GMT+0800 (Singapore Standard Time)'
+```
+
+----------------------------------------
+
+TITLE: Matching Localized Values (en-US)
+DESCRIPTION: This snippet defines the `match` object for the `en-US` locale, used by the `parse` function.  It includes regular expressions and utility functions for matching and parsing ordinal numbers, eras, quarters, months, days, and day periods. The `buildMatchPatternFn` and `buildMatchFn` functions are assumed to be imported from other modules within the library.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/i18nContributionGuide.md#2025-04-17_snippet_15
+
+LANGUAGE: javascript
+CODE:
+```
+```js
+// In `en-US` locale:
+import buildMatchPatternFn from "../../../_lib/buildMatchPatternFn/index.js";
+import buildMatchFn from "../../../_lib/buildMatchFn/index.js";
+
+var matchOrdinalNumberPattern = /^(\d+)(th|st|nd|rd)?/i;
+var parseOrdinalNumberPattern = /\d+/i;
+
+var matchEraPatterns = {
+  narrow: /^(b|a)/i,
+  abbreviated: /^(b\.?\s?c\.?|b\.?\s?c\.?\s?e\.?|a\.?\s?d\.?|c\.?\s?e\.?)/i,
+  wide: /^(before christ|before common era|anno domini|common era)/i,
+};
+var parseEraPatterns = {
+  any: [/^b/i, /^(a|c)/i],
+};
+
+var matchQuarterPatterns = {
+  narrow: /^[1234]/i,
+  abbreviated: /^q[1234]/i,
+  wide: /^[1234](th|st|nd|rd)? quarter/i,
+};
+var parseQuarterPatterns = {
+  any: [/1/i, /2/i, /3/i, /4/i],
+};
+
+var matchMonthPatterns = {
+  narrow: /^[jfmasond]/i,
+  abbreviated: /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i,
+  wide: /^(january|february|march|april|may|june|july|august|september|october|november|december)/i,
+};
+var parseMonthPatterns = {
+  narrow: [
+    /^j/i,
+    /^f/i,
+    /^m/i,
+    /^a/i,
+    /^m/i,
+    /^j/i,
+    /^j/i,
+    /^a/i,
+    /^s/i,
+    /^o/i,
+    /^n/i,
+    /^d/i,
+  ],
+  any: [
+    /^ja/i,
+    /^f/i,
+    /^mar/i,
+    /^ap/i,
+    /^may/i,
+    /^jun/i,
+    /^jul/i,
+    /^au/i,
+    /^s/i,
+    /^o/i,
+    /^n/i,
+    /^d/i,
+  ],
+};
+
+var matchDayPatterns = {
+  narrow: /^[smtwf]/i,
+  short: /^(su|mo|tu|we|th|fr|sa)/i,
+  abbreviated: /^(sun|mon|tue|wed|thu|fri|sat)/i,
+  wide: /^(sunday|monday|tuesday|wednesday|thursday|friday|saturday)/i,
+};
+var parseDayPatterns = {
+  narrow: [/^s/i, /^m/i, /^t/i, /^w/i, /^t/i, /^f/i, /^s/i],
+  any: [/^su/i, /^m/i, /^tu/i, /^w/i, /^th/i, /^f/i, /^sa/i],
+};
+
+var matchDayPeriodPatterns = {
+  narrow: /^(a|p|mi|n|(in the|at) (morning|afternoon|evening|night))/i,
+  any: /^([ap]\.?\s?m\.?|midnight|noon|(in the|at) (morning|afternoon|evening|night))/i,
+};
+var parseDayPeriodPatterns = {
+  any: {
+    am: /^a/i,
+    pm: /^p/i,
+    midnight: /^mi/i,
+    noon: /^no/i,
+    morning: /morning/i,
+    afternoon: /afternoon/i,
+    evening: /evening/i,
+    night: /night/i,
+  },
+};
+
+var match = {
+  ordinalNumber: buildMatchPatternFn({
+    matchPattern: matchOrdinalNumberPattern,
+    parsePattern: parseOrdinalNumberPattern,
+    valueCallback: function (value) {
+      return parseInt(value, 10);
+    },
+  }),
+
+  era: buildMatchFn({
+    matchPatterns: matchEraPatterns,
+    defaultMatchWidth: "wide",
+    parsePatterns: parseEraPatterns,
+    defaultParseWidth: "any",
+  }),
+
+  quarter: buildMatchFn({
+    matchPatterns: matchQuarterPatterns,
+    defaultMatchWidth: "wide",
+    parsePatterns: parseQuarterPatterns,
+    defaultParseWidth: "any",
+    valueCallback: function (index) {
+      return index + 1;
+    },
+  }),
+
+  month: buildMatchFn({
+    matchPatterns: matchMonthPatterns,
+    defaultMatchWidth: "wide",
+    parsePatterns: parseMonthPatterns,
+    defaultParseWidth: "any",
+  }),
+
+  day: buildMatchFn({
+    matchPatterns: matchDayPatterns,
+    defaultMatchWidth: "wide",
+    parsePatterns: parseDayPatterns,
+    defaultParseWidth: "any",
+  }),
+
+  dayPeriod: buildMatchFn({
+    matchPatterns: matchDayPeriodPatterns,
+    defaultMatchWidth: "any",
+    parsePatterns: parseDayPeriodPatterns,
+    defaultParseWidth: "any",
+  }),
+};
+
+export default match;
+```
+```
+
+----------------------------------------
+
+TITLE: Comparing Wrong vs Correct Date Formatting in JavaScript
+DESCRIPTION: Demonstrates the correct and incorrect usage of date formatting tokens, specifically contrasting YYYY-MM-DD vs yyyy-MM-dd format patterns and D.MM.YY vs d.MM.yy parsing patterns.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/unicodeTokens.md#2025-04-17_snippet_0
+
+LANGUAGE: javascript
+CODE:
+```
+// ❌ Wrong!
+format(new Date(), "YYYY-MM-DD");
+//=> 2018-10-283
+
+// ✅ Correct
+format(new Date(), "yyyy-MM-dd");
+//=> 2018-10-10
+
+// ❌ Wrong!
+parse("11.02.87", "D.MM.YY", new Date()).toString();
+//=> 'Sat Jan 11 1986 00:00:00 GMT+0200 (EET)'
+
+// ✅ Correct
+parse("11.02.87", "d.MM.yy", new Date()).toString();
+//=> 'Wed Feb 11 1987 00:00:00 GMT+0200 (EET)'
+```
+
+----------------------------------------
+
+TITLE: Implementing era Localization Function for en-US Locale in date-fns
+DESCRIPTION: This snippet demonstrates how to implement the era localization function for the en-US locale in date-fns using the buildLocalizeFn helper function.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/i18nContributionGuide.md#2025-04-17_snippet_3
+
+LANGUAGE: javascript
+CODE:
+```
+// In `en-US` locale:
+import buildLocalizeFn from "../../../_lib/buildLocalizeFn/index.js";
+
+var eraValues = {
+  narrow: ["B", "A"],
+  abbreviated: ["BC", "AD"],
+  wide: ["Before Christ", "Anno Domini"],
+};
+
+var localize = {
+  // ...
+  era: buildLocalizeFn({
+    values: eraValues,
+    defaultWidth: "wide",
+  }),
+  // ...
+};
+
+export default localize;
+```
+
+----------------------------------------
+
+TITLE: Mixing Different Time Zone Date Objects
+DESCRIPTION: Shows how to work with multiple date objects in different time zones for business day calculations. Demonstrates how date-fns normalizes arguments based on the reference type.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/timeZones.md#2025-04-17_snippet_1
+
+LANGUAGE: typescript
+CODE:
+```
+import { TZDate } from "@date-fns/tz";
+import { differenceInBusinessDays } from "date-fns";
+
+const laterDate = new TZDate(2025, 0, 1, "Asia/Singapore");
+const earlierDate = new TZDate(2024, 0, 1, "America/New_York");
+
+// Will calculate in Asia/Singapore
+differenceInBusinessDays(laterDate, earlierDate);
+//=> 262
+
+// Will calculate in America/New_York
+differenceInBusinessDays(earlierDate, laterDate);
+//=> -261
+```
+
+----------------------------------------
+
+TITLE: Using Locales with date-fns formatDistance Function
+DESCRIPTION: Demonstrates how to import and use a specific locale (Esperanto) with the formatDistance function. Shows how to pass the locale as an option to properly format date differences in different languages.
+SOURCE: https://github.com/date-fns/date-fns/blob/main/docs/i18n.md#2025-04-17_snippet_0
+
+LANGUAGE: javascript
+CODE:
+```
+import { formatDistance } from "date-fns";
+// Require Esperanto locale
+import { eo } from "date-fns/locale";
+
+const result = formatDistance(
+  new Date(2016, 7, 1),
+  new Date(2015, 0, 1),
+  { locale: eo }, // Pass the locale as an option
+);
+//=> 'pli ol 1 jaro'
+```

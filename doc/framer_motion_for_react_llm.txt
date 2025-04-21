@@ -1,0 +1,224 @@
+# Motion for React (formerly Framer Motion)
+
+## Overview
+Motion for React is a powerful animation library built for React, combining hardware-accelerated performance with the flexibility of JavaScript animations.
+
+---
+
+## Getting Started
+
+### Installation
+```bash
+npm install motion
+```
+
+### Import
+```tsx
+import { motion } from "motion/react"
+```
+
+---
+
+## Usage
+
+### Basic Animation
+```tsx
+<motion.div animate={{ opacity: 1 }} />
+```
+
+### Initial Animation
+```tsx
+<motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} />
+```
+
+### Disable Initial
+```tsx
+<motion.button initial={false} animate={{ scale: 1 }} />
+```
+
+---
+
+## Gestures
+
+### Hover & Tap
+```tsx
+<motion.button
+  whileHover={{ scale: 1.1 }}
+  whileTap={{ scale: 0.95 }}
+/>
+```
+
+### Gesture Props
+- `whileHover`
+- `whileTap`
+- `whileFocus`
+- `whileDrag`
+- `whileInView`
+
+---
+
+## Scroll Animations
+
+### Scroll-triggered
+```tsx
+<motion.div
+  initial={{ opacity: 0 }}
+  whileInView={{ opacity: 1 }}
+/>
+```
+
+### Scroll-linked
+```tsx
+const { scrollYProgress } = useScroll();
+<motion.div style={{ scaleX: scrollYProgress }} />
+```
+
+---
+
+## Layout Animations
+
+### Basic Usage
+```tsx
+<motion.div layout />
+```
+
+### Shared Layout
+```tsx
+<motion.div layoutId="modal" />
+```
+
+### LayoutGroup
+```tsx
+<LayoutGroup>
+  <Accordion />
+  <Accordion />
+</LayoutGroup>
+```
+
+---
+
+## Exit Animations
+```tsx
+<AnimatePresence>
+  {isVisible && (
+    <motion.div
+      key="modal"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    />
+  )}
+</AnimatePresence>
+```
+
+---
+
+## Variants
+
+### Defining Variants
+```tsx
+const variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+```
+
+### Using Variants
+```tsx
+<motion.div
+  variants={variants}
+  initial="hidden"
+  animate="visible"
+/>
+```
+
+### Nested Variants
+```tsx
+<motion.ul initial="hidden" animate="visible" variants={list}>
+  <motion.li variants={item} />
+</motion.ul>
+```
+
+---
+
+## Keyframes
+```tsx
+<motion.div animate={{ x: [0, 100, 0] }} />
+```
+
+---
+
+## Motion Values & Hooks
+
+### Common Hooks
+- `useScroll`
+- `useSpring`
+- `useTransform`
+- `useMotionTemplate`
+- `useVelocity`
+- `useMotionValueEvent`
+
+---
+
+## Animation Controls
+```tsx
+const [scope, animate] = useAnimate();
+
+useEffect(() => {
+  animate(scope.current, { x: '100%' });
+}, []);
+```
+
+---
+
+## CSS Variables
+```tsx
+<motion.ul
+  initial={{ '--rotate': '0deg' }}
+  animate={{ '--rotate': '360deg' }}
+>
+  <li style={{ transform: 'rotate(var(--rotate))' }} />
+</motion.ul>
+```
+
+---
+
+## Transitions
+
+### Setting Transitions
+```tsx
+<motion.div animate={{ x: 100 }} transition={{ duration: 0.8 }} />
+```
+
+### Types
+- `tween`
+- `spring`
+- `inertia`
+
+### Advanced Example
+```tsx
+<motion.li
+  animate={{ x: 0, opacity: 1 }}
+  transition={{
+    default: { type: 'spring' },
+    opacity: { ease: 'linear' }
+  }}
+/>
+```
+
+---
+
+## Inertia & Drag Transitions
+```tsx
+<motion.div
+  drag
+  dragTransition={{
+    power: 0.2,
+    min: 0,
+    max: 100,
+    modifyTarget: target => Math.round(target / 50) * 50
+  }}
+/>
+```
+
+

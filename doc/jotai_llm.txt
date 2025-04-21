@@ -1,0 +1,585 @@
+TITLE: Creating Primitive Atoms with Type Inference in Jotai
+DESCRIPTION: Examples of creating primitive atoms in Jotai with automatically inferred types. The TypeScript compiler automatically determines the type based on the initial value provided.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/guides/typescript.mdx#2025-04-12_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+const numAtom = atom(0) // primitive number atom
+const strAtom = atom('') // primitive string atom
+```
+
+----------------------------------------
+
+TITLE: Creating Primitive Atoms in Jotai
+DESCRIPTION: Demonstrates how to create basic atoms with different data types including numbers, strings, arrays and objects. These atoms represent the basic building blocks of state in Jotai.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/README.md#2025-04-12_snippet_0
+
+LANGUAGE: jsx
+CODE:
+```
+import { atom } from 'jotai'
+
+const countAtom = atom(0)
+const countryAtom = atom('Japan')
+const citiesAtom = atom(['Tokyo', 'Kyoto', 'Osaka'])
+const mangaAtom = atom({ 'Dragon Ball': 1984, 'One Piece': 1997, Naruto: 1999 })
+```
+
+----------------------------------------
+
+TITLE: Creating Derived Atoms in Jotai for Filtering Friend Lists
+DESCRIPTION: This snippet demonstrates how to create derived atoms in Jotai for filtering a list of friends based on their online status. It shows the creation of a base atom and two derived atoms for online and offline friends.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/basics/concepts.mdx#2025-04-12_snippet_0
+
+LANGUAGE: javascript
+CODE:
+```
+const dumbAtom = atom([{ name: 'Friend 1', online: false }])
+const onlineAtom = atom((get) => get(dumbAtom).filter((item) => item.online))
+const offlineAtom = atom((get) => get(dumbAtom).filter((item) => !item.online))
+```
+
+----------------------------------------
+
+TITLE: Combining Multiple Atoms
+DESCRIPTION: Shows different approaches to combining multiple atoms into a single derived atom, including basic and functional programming patterns.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/README.md#2025-04-12_snippet_3
+
+LANGUAGE: jsx
+CODE:
+```
+const count1 = atom(1)
+const count2 = atom(2)
+const count3 = atom(3)
+
+const sum = atom((get) => get(count1) + get(count2) + get(count3))
+```
+
+LANGUAGE: jsx
+CODE:
+```
+const atoms = [count1, count2, count3, ...otherAtoms]
+const sum = atom((get) => atoms.map(get).reduce((acc, count) => acc + count))
+```
+
+----------------------------------------
+
+TITLE: Implementing useSetAtom Hook in React Component
+DESCRIPTION: Demonstrates the use of useSetAtom hook to update an atom's value without reading it, which can help prevent unnecessary rerenders in performance-critical scenarios.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/core/use-atom.mdx#2025-04-12_snippet_4
+
+LANGUAGE: jsx
+CODE:
+```
+const switchAtom = atom(false)
+
+const SetTrueButton = () => {
+  const setCount = useSetAtom(switchAtom)
+  const setTrue = () => setCount(true)
+
+  return (
+    <div>
+      <button onClick={setTrue}>Set True</button>
+    </div>
+  )
+}
+
+const SetFalseButton = () => {
+  const setCount = useSetAtom(switchAtom)
+  const setFalse = () => setCount(false)
+
+  return (
+    <div>
+      <button onClick={setFalse}>Set False</button>
+    </div>
+  )
+}
+
+export default function App() {
+  const state = useAtomValue(switchAtom)
+
+  return (
+    <div>
+      State: <b>{state.toString()}</b>
+      <SetTrueButton />
+      <SetFalseButton />
+    </div>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Using useAtom Hook in JavaScript
+DESCRIPTION: Demonstrates the basic usage of the useAtom hook to read and update an atom's value in a React component. It also includes important notes on referential equality and potential infinite loops.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/core/use-atom.mdx#2025-04-12_snippet_0
+
+LANGUAGE: javascript
+CODE:
+```
+const [value, setValue] = useAtom(anAtom)
+
+const stableAtom = atom(0)
+const Component = () => {
+  const [atomValue] = useAtom(atom(0)) // This will cause an infinite loop since the atom instance is being recreated in every render
+  const [atomValue] = useAtom(stableAtom) // This is fine
+  const [derivedAtomValue] = useAtom(
+    useMemo(
+      // This is also fine
+      () => atom((get) => get(stableAtom) * 2),
+      [],
+    ),
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Example React Application with Jotai
+DESCRIPTION: Complete example showing integration of Jotai atoms in a React application with async data fetching.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/core/atom.mdx#2025-04-12_snippet_4
+
+LANGUAGE: tsx
+CODE:
+```
+import { Suspense } from 'react'
+import { atom, useAtom } from 'jotai'
+
+const userIdAtom = atom(1)
+const userAtom = atom(async (get, { signal }) => {
+  const userId = get(userIdAtom)
+  const response = await fetch(
+    `https://jsonplaceholder.typicode.com/users/${userId}?_delay=2000`,
+    { signal },
+  )
+  return response.json()
+})
+
+const Controls = () => {
+  const [userId, setUserId] = useAtom(userIdAtom)
+  return (
+    <div>
+      User Id: {userId}
+      <button onClick={() => setUserId((c) => c - 1)}>Prev</button>
+      <button onClick={() => setUserId((c) => c + 1)}>Next</button>
+    </div>
+  )
+}
+
+const UserName = () => {
+  const [user] = useAtom(userAtom)
+  return <div>User name: {user.name}</div>
+}
+
+const App = () => (
+  <>
+    <Controls />
+    <Suspense fallback="Loading...">
+      <UserName />
+    </Suspense>
+  </>
+)
+
+export default App
+```
+
+----------------------------------------
+
+TITLE: Atom Creation in React Components
+DESCRIPTION: Example of creating atoms within React components using useMemo for stable references.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/core/atom.mdx#2025-04-12_snippet_2
+
+LANGUAGE: javascript
+CODE:
+```
+const Component = ({ value }) => {
+  const valueAtom = useMemo(() => atom({ value }), [value])
+  // ...
+}
+```
+
+----------------------------------------
+
+TITLE: Migrating Async Atoms from Jotai v1 to v2
+DESCRIPTION: Compares how to handle async atoms in Jotai v1 versus v2. In v2, get functions no longer automatically resolve promises, requiring explicit await or then() usage.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/guides/migrating-to-v2-api.mdx#2025-04-12_snippet_2
+
+LANGUAGE: javascript
+CODE:
+```
+// Previous API
+const asyncAtom = atom(async () => 'hello')
+const derivedAtom = atom((get) => get(asyncAtom).toUppercase())
+```
+
+LANGUAGE: javascript
+CODE:
+```
+// New API
+const asyncAtom = atom(async () => 'hello')
+const derivedAtom = atom(async (get) => (await get(asyncAtom)).toUppercase())
+// or
+const derivedAtom = atom((get) => get(asyncAtom).then((x) => x.toUppercase()))
+```
+
+----------------------------------------
+
+TITLE: Creating and Using Custom Jotai Store in React
+DESCRIPTION: Demonstrates how to create a custom store using createStore(), set and get atom values, subscribe to atom changes, and use the store with a Provider component.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/core/store.mdx#2025-04-12_snippet_0
+
+LANGUAGE: jsx
+CODE:
+```
+const myStore = createStore()
+
+const countAtom = atom(0)
+myStore.set(countAtom, 1)
+const unsub = myStore.sub(countAtom, () => {
+  console.log('countAtom value is changed to', myStore.get(countAtom))
+})
+// unsub() to unsubscribe
+
+const Root = () => (
+  <Provider store={myStore}>
+    <App />
+  </Provider>
+)
+```
+
+----------------------------------------
+
+TITLE: Explicitly Typing Primitive Atoms in Jotai
+DESCRIPTION: Examples of creating primitive atoms with explicit type annotations in Jotai. This approach allows defining more complex types or union types for atoms.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/guides/typescript.mdx#2025-04-12_snippet_1
+
+LANGUAGE: typescript
+CODE:
+```
+const numAtom = atom<number>(0)
+const numAtom = atom<number | null>(0)
+const arrAtom = atom<string[]>([])
+```
+
+----------------------------------------
+
+TITLE: Creating a Writable Derived Atom in JavaScript
+DESCRIPTION: Shows how to create a derived atom with both read and write functions, converting text to uppercase and allowing updates to the original atom.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/guides/composing-atoms.mdx#2025-04-12_snippet_1
+
+LANGUAGE: javascript
+CODE:
+```
+const textAtom = atom('hello')
+export const textUpperCaseAtom = atom(
+  (get) => get(textAtom).toUpperCase(),
+  (_get, set, newText) => set(textAtom, newText),
+)
+```
+
+----------------------------------------
+
+TITLE: Using Atoms in React Components
+DESCRIPTION: Shows how to use atoms within React components using the useAtom hook, similar to React's useState hook pattern.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/README.md#2025-04-12_snippet_1
+
+LANGUAGE: jsx
+CODE:
+```
+import { useAtom } from 'jotai'
+
+function Counter() {
+  const [count, setCount] = useAtom(countAtom)
+  return (
+    <h1>
+      {count}
+      <button onClick={() => setCount((c) => c + 1)}>one up</button>
+      ...
+```
+
+----------------------------------------
+
+TITLE: Implementing atomWithDebounce in TypeScript
+DESCRIPTION: Creates an atom with debounced state updates. Includes functionality for managing timeouts, tracking debounce status, and handling state updates with configurable delay. Returns an object containing current value, debouncing status, timeout clearing, and debounced value atoms.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/recipes/atom-with-debounce.mdx#2025-04-12_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+import { atom, SetStateAction } from 'jotai'
+
+export default function atomWithDebounce<T>(
+  initialValue: T,
+  delayMilliseconds = 500,
+  shouldDebounceOnReset = false,
+) {
+  const prevTimeoutAtom = atom<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  )
+
+  // DO NOT EXPORT currentValueAtom as using this atom to set state can cause
+  // inconsistent state between currentValueAtom and debouncedValueAtom
+  const _currentValueAtom = atom(initialValue)
+  const isDebouncingAtom = atom(false)
+
+  const debouncedValueAtom = atom(
+    initialValue,
+    (get, set, update: SetStateAction<T>) => {
+      clearTimeout(get(prevTimeoutAtom))
+
+      const prevValue = get(_currentValueAtom)
+      const nextValue =
+        typeof update === 'function'
+          ? (update as (prev: T) => T)(prevValue)
+          : update
+
+      const onDebounceStart = () => {
+        set(_currentValueAtom, nextValue)
+        set(isDebouncingAtom, true)
+      }
+
+      const onDebounceEnd = () => {
+        set(debouncedValueAtom, nextValue)
+        set(isDebouncingAtom, false)
+      }
+
+      onDebounceStart()
+
+      if (!shouldDebounceOnReset && nextValue === initialValue) {
+        onDebounceEnd()
+        return
+      }
+
+      const nextTimeoutId = setTimeout(() => {
+        onDebounceEnd()
+      }, delayMilliseconds)
+
+      // set previous timeout atom in case it needs to get cleared
+      set(prevTimeoutAtom, nextTimeoutId)
+    },
+  )
+
+  // exported atom setter to clear timeout if needed
+  const clearTimeoutAtom = atom(null, (get, set, _arg) => {
+    clearTimeout(get(prevTimeoutAtom))
+    set(isDebouncingAtom, false)
+  })
+
+  return {
+    currentValueAtom: atom((get) => get(_currentValueAtom)),
+    isDebouncingAtom,
+    clearTimeoutAtom,
+    debouncedValueAtom,
+  }
+}
+```
+
+----------------------------------------
+
+TITLE: Handling SSR with Jotai Atoms in Next.js
+DESCRIPTION: This code snippet shows how to create an atom that handles server-side rendering (SSR) in Next.js. It uses a guard to return prefetched or empty data during SSR, and fetches data on the client-side.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/guides/nextjs.mdx#2025-04-12_snippet_1
+
+LANGUAGE: javascript
+CODE:
+```
+const postData = atom((get) => {
+  const id = get(postId)
+  if (isSSR || prefetchedPostData[id]) {
+    return prefetchedPostData[id] || EMPTY_POST_DATA
+  }
+  return fetchData(id) // returns a promise
+})
+```
+
+----------------------------------------
+
+TITLE: Avoiding Heavy Computation in Component Renders with Jotai
+DESCRIPTION: This example demonstrates how to move heavy computation out of the React component lifecycle and into Jotai actions to improve performance. The code shows the incorrect approach with computation in selectors versus the correct approach using action atoms.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/guides/performance.mdx#2025-04-12_snippet_0
+
+LANGUAGE: js
+CODE:
+```
+// Heavy computation for each item
+const selector = (s) => s.filter(heavyComputation)
+const Profile = () => {
+  const [computed] = useAtom(selectAtom(friendsAtom, selector))
+}
+```
+
+LANGUAGE: js
+CODE:
+```
+const friendsAtom = atom([])
+const fetchFriendsAtom = atom(null, async (get, set, payload) => {
+  // Fetch all friends
+  const res = await fetch('https://...')
+  // Make heavy computation once only
+  const computed = res.filter(heavyComputation)
+  set(friendsAtom, computed)
+})
+// Usage in components
+const Profile = () => {
+  const [friends] = useAtom(friendsAtom)
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing Basic Atom State Management in JavaScript
+DESCRIPTION: A simplified implementation of Jotai's core functionality using React hooks. It demonstrates how to create atoms, manage their state using WeakMap to avoid memory leaks, and implement the useAtom hook for reading and updating atom values.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/guides/core-internals.mdx#2025-04-12_snippet_0
+
+LANGUAGE: javascript
+CODE:
+```
+import { useState, useEffect } from 'react'
+
+// atom function returns a config object which contains initial value
+export const atom = (initialValue) => ({ init: initialValue })
+
+// we need to keep track of the state of the atom.
+// we are using weakmap to avoid memory leaks
+const atomStateMap = new WeakMap()
+const getAtomState = (atom) => {
+  let atomState = atomStateMap.get(atom)
+  if (!atomState) {
+    atomState = { value: atom.init, listeners: new Set() }
+    atomStateMap.set(atom, atomState)
+  }
+  return atomState
+}
+
+// useAtom hook returns a tuple of the current value
+// and a function to update the atom's value
+export const useAtom = (atom) => {
+  const atomState = getAtomState(atom)
+  const [value, setValue] = useState(atomState.value)
+  useEffect(() => {
+    const callback = () => setValue(atomState.value)
+
+    // same atom can be used at multiple components, so we need to
+    // keep listening for atom's state change till component is unmounted.
+    atomState.listeners.add(callback)
+    callback()
+    return () => atomState.listeners.delete(callback)
+  }, [atomState])
+
+  const setAtom = (nextValue) => {
+    atomState.value = nextValue
+
+    // let all the subscribed components know that the atom's state has changed
+    atomState.listeners.forEach((l) => l())
+  }
+
+  return [value, setAtom]
+}
+```
+
+----------------------------------------
+
+TITLE: Explicitly Typing Derived Atoms in Jotai
+DESCRIPTION: Examples of creating derived atoms with explicit type annotations, covering async atoms, write-only atoms with multiple parameters, and read/write atoms. This approach is useful for complex typing scenarios.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/guides/typescript.mdx#2025-04-12_snippet_3
+
+LANGUAGE: typescript
+CODE:
+```
+const asyncStrAtom = atom<Promise<string>>(async () => 'foo')
+
+/**
+ * For write only atoms you'll need to supply three type parameters.
+ * The first type parameter describes the value returned from the atom. In the following example this is `null`.
+ * The second type parameter describes the arguments (plural) you will pass to the "write" function. Even if you only
+ * plan to have one argument, this type must be an array as show in the example.
+ * The third type parameter describes the return value of the "write" function. Normally, there is no return value,
+ * which is why we use `void` in the example below.
+ */
+const writeOnlyAtom = atom<null, [string, number], void>(
+  null,
+  (_get, set, stringValue, numberValue) => set(fooAtom, stringValue),
+)
+
+/**
+ * Read/Write atoms also take the same three type parameters.
+ * Just for the sake of completeness, in this example, we show that the first type parameter
+ * can also describe an async atom.
+ */
+const readWriteAtom = atom<Promise<string>, [number], void>(
+  async (get) => await get(asyncStrAtom),
+  (_get, set, num) => set(strAtom, String(num)),
+)
+```
+
+----------------------------------------
+
+TITLE: Creating Primitive Atoms in JavaScript
+DESCRIPTION: Examples of creating basic primitive atoms with different data types as initial values.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/core/atom.mdx#2025-04-12_snippet_0
+
+LANGUAGE: javascript
+CODE:
+```
+import { atom } from 'jotai'
+
+const priceAtom = atom(10)
+const messageAtom = atom('hello')
+const productAtom = atom({ id: 12, name: 'good stuff' })
+```
+
+----------------------------------------
+
+TITLE: Creating Derived Read-Only Atoms
+DESCRIPTION: Demonstrates how to create derived atoms that compute values based on other atoms using a read function.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/README.md#2025-04-12_snippet_2
+
+LANGUAGE: jsx
+CODE:
+```
+const doubledCountAtom = atom((get) => get(countAtom) * 2)
+
+function DoubleCounter() {
+  const [doubledCount] = useAtom(doubledCountAtom)
+  return <h2>{doubledCount}</h2>
+}
+```
+
+----------------------------------------
+
+TITLE: Switching Between Sync and Async Values
+DESCRIPTION: Shows how to create a pattern that switches from synchronous to asynchronous to trigger suspending when needed. This allows dynamic control over when components suspend.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/guides/async.mdx#2025-04-12_snippet_5
+
+LANGUAGE: javascript
+CODE:
+```
+const request = async () => fetch('https://...').then((res) => res.json())
+const baseAtom = atom(0)
+const Component = () => {
+  const [value, setValue] = useAtom(baseAtom)
+  const handleClick = () => {
+    setValue(request()) // Will suspend until request resolves
+  }
+  // ...
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing useAtomDevtools for Redux DevTools Integration
+DESCRIPTION: Demonstrates how to use the useAtomDevtools hook to connect a specific atom to Redux DevTools for debugging. This enables time travel debugging, pausing, and value dispatching for the specified atom.
+SOURCE: https://github.com/pmndrs/jotai/blob/main/docs/guides/debugging.mdx#2025-04-12_snippet_2
+
+LANGUAGE: javascript
+CODE:
+```
+const countAtom = atom(0)
+// setting countAtom.debugLabel is recommended if we have more atoms
+
+function Counter() {
+  const [count, setCount] = useAtom(countAtom)
+  useAtomDevtools(countAtom)
+}
+```

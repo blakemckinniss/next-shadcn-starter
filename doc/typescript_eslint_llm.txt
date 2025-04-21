@@ -1,0 +1,695 @@
+TITLE: Installing ESLint with TypeScript dependencies
+DESCRIPTION: Command to install the required packages for ESLint, TypeScript, and typescript-eslint tooling using npm. Alternative package managers (yarn, pnpm) can also be used.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/getting-started/Quickstart.mdx#2025-04-14_snippet_0
+
+LANGUAGE: bash
+CODE:
+```
+npm install --save-dev eslint @eslint/js typescript typescript-eslint
+```
+
+----------------------------------------
+
+TITLE: Enhanced ESLint configuration with strict and stylistic rules
+DESCRIPTION: Advanced ESLint configuration that adds strict and stylistic rule sets on top of the recommended configuration. The strict rules help catch more potential bugs, while stylistic rules enforce consistent code formatting.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/getting-started/Quickstart.mdx#2025-04-14_snippet_3
+
+LANGUAGE: javascript
+CODE:
+```
+export default tseslint.config(
+  eslint.configs.recommended,
+  // Remove this line
+  tseslint.configs.recommended,
+  // Add this line
+  tseslint.configs.strict,
+  // Add this line
+  tseslint.configs.stylistic,
+);
+```
+
+----------------------------------------
+
+TITLE: Running ESLint in project directory
+DESCRIPTION: Commands to run ESLint in the current directory using npx, yarn, or pnpm. This will lint all TypeScript compatible files in the project and output results to the terminal.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/getting-started/Quickstart.mdx#2025-04-14_snippet_2
+
+LANGUAGE: bash
+CODE:
+```
+npx eslint .
+```
+
+----------------------------------------
+
+TITLE: Defining RuleCreator with Custom Docs Types in TypeScript
+DESCRIPTION: This snippet demonstrates how to create a custom RuleCreator with additional documentation properties for an ESLint plugin. It defines an interface for extra rule documentation and uses ESLintUtils.RuleCreator to generate rules with these custom properties.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/developers/ESLint_Plugins.mdx#2025-04-14_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+import { ESLintUtils } from '@typescript-eslint/utils';
+
+export interface ExamplePluginDocs {
+  description: string;
+  recommended?: boolean;
+  requiresTypeChecking?: boolean;
+}
+
+export const createRule = ESLintUtils.RuleCreator<ExamplePluginDocs>(
+  name =>
+    `https://github.com/your/eslint-plugin-example/tree/main/docs/${name}.md`,
+);
+```
+
+----------------------------------------
+
+TITLE: Demonstrating Incorrect Usage of 'any' Assignments in TypeScript
+DESCRIPTION: This code snippet shows various examples of assignments that violate the no-unsafe-assignment rule, including direct assignments, destructuring, function parameters, class properties, and generic type mismatches.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/no-unsafe-assignment.mdx#2025-04-14_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+const x = 1 as any,
+  y = 1 as any;
+const [x] = 1 as any;
+const [x] = [] as any[];
+const [x] = [1 as any];
+[x] = [1] as [any];
+
+function foo(a = 1 as any) {}
+class Foo {
+  constructor(private a = 1 as any) {}
+}
+class Foo {
+  private a = 1 as any;
+}
+
+// generic position examples
+const x: Set<string> = new Set<any>();
+const x: Map<string, string> = new Map<string, any>();
+const x: Set<string[]> = new Set<any[]>();
+const x: Set<Set<Set<string>>> = new Set<Set<Set<any>>>();
+```
+
+----------------------------------------
+
+TITLE: Creating Basic Custom ESLint Rule with RuleCreator
+DESCRIPTION: Demonstrates how to create a basic custom ESLint rule using RuleCreator that enforces function declarations to start with uppercase letters.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/developers/Custom_Rules.mdx#2025-04-14_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+import { ESLintUtils } from '@typescript-eslint/utils';
+
+const createRule = ESLintUtils.RuleCreator(
+  name => `https://example.com/rule/${name}`,
+);
+
+// Type: RuleModule<"uppercase", ...>
+export const rule = createRule({
+  create(context) {
+    return {
+      FunctionDeclaration(node) {
+        if (node.id != null) {
+          if (/^[a-z]/.test(node.id.name)) {
+            context.report({
+              messageId: 'uppercase',
+              node: node.id,
+            });
+          }
+        }
+      },
+    };
+  },
+  name: 'uppercase-first-declarations',
+  meta: {
+    docs: {
+      description:
+        'Function declaration names should start with an upper-case letter.',
+    },
+    messages: {
+      uppercase: 'Start this name with an upper-case letter.',
+    },
+    type: 'suggestion',
+    schema: [],
+  },
+  defaultOptions: [],
+});
+```
+
+----------------------------------------
+
+TITLE: Basic ESLint Configuration for TypeScript
+DESCRIPTION: Basic ESLint configuration setup in .eslintrc.cjs that enables recommended rules for TypeScript projects. Includes parser configuration, plugin setup, and extends recommended rulesets.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/getting-started/Legacy_ESLint_Setup.mdx#2025-04-14_snippet_1
+
+LANGUAGE: javascript
+CODE:
+```
+/* eslint-env node */
+module.exports = {
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint'],
+  root: true,
+};
+```
+
+----------------------------------------
+
+TITLE: Incorrect Usage of Non-Null Assertion in TypeScript
+DESCRIPTION: This example demonstrates incorrect usage of the non-null assertion operator ('!') in TypeScript. It forces a potentially undefined property to be treated as non-null, which can lead to runtime errors.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/no-non-null-assertion.mdx#2025-04-14_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+interface Example {
+  property?: string;
+}
+
+declare const example: Example;
+const includesBaz = example.property!.includes('baz');
+```
+
+----------------------------------------
+
+TITLE: Creating a Typed ESLint Rule Using TypeScript's Type Checker
+DESCRIPTION: This example demonstrates how to create an ESLint rule that accesses TypeScript's type checker to ban for-of loops over enum types. It uses the ESLintUtils.getParserServices function to access type information and check if the right side of a for-of loop is an enum.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/developers/Custom_Rules.mdx#2025-04-14_snippet_5
+
+LANGUAGE: typescript
+CODE:
+```
+import { ESLintUtils } from '@typescript-eslint/utils';
+import * as ts from 'typescript';
+
+export const rule = createRule({
+  create(context) {
+    return {
+      ForOfStatement(node) {
+        // 1. Grab the parser services for the rule
+        const services = ESLintUtils.getParserServices(context);
+
+        // 2. Find the TS type for the ES node
+        const type = services.getTypeAtLocation(node.right);
+
+        // 3. Check the TS type's backing symbol for being an enum
+        if (type.symbol.flags & ts.SymbolFlags.Enum) {
+          context.report({
+            messageId: 'loopOverEnum',
+            node: node.right,
+          });
+        }
+      },
+    };
+  },
+  meta: {
+    docs: {
+      description: 'Avoid looping over enums.',
+    },
+    messages: {
+      loopOverEnum: 'Do not loop over enums.',
+    },
+    type: 'suggestion',
+    schema: [],
+  },
+  name: 'no-loop-over-enum',
+  defaultOptions: [],
+});
+```
+
+----------------------------------------
+
+TITLE: Installing TypeScript ESTree Package Reference
+DESCRIPTION: Package name reference for the TypeScript ESTree parser that can be installed via npm.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/typescript-estree/README.md#2025-04-14_snippet_0
+
+LANGUAGE: plaintext
+CODE:
+```
+@typescript-eslint/typescript-estree
+```
+
+----------------------------------------
+
+TITLE: Installing typescript-eslint v7 Dependencies
+DESCRIPTION: This command installs the necessary dependencies for upgrading to typescript-eslint v7. It includes ESLint, TypeScript, and the typescript-eslint parser and plugin.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/website/blog/2024-02-12-announcing-typescript-eslint-v7.md#2025-04-14_snippet_0
+
+LANGUAGE: bash
+CODE:
+```
+npm i eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin
+```
+
+----------------------------------------
+
+TITLE: Using typescript-eslint Recommended Config (Flat Config)
+DESCRIPTION: Example showing how to use only the typescript-eslint recommended configuration in flat config format. This provides rules for code correctness that can be used without additional configuration.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/users/Shared_Configurations.mdx#2025-04-14_snippet_5
+
+LANGUAGE: javascript
+CODE:
+```
+export default tseslint.config(
+  tseslint.configs.recommended,
+);
+```
+
+----------------------------------------
+
+TITLE: Advanced Flat Config Setup with typescript-eslint
+DESCRIPTION: This JavaScript code shows a more advanced setup using typescript-eslint with flat configs. It enables the plugin, parser, and specific type-aware linting rules.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/website/blog/2024-02-12-announcing-typescript-eslint-v7.md#2025-04-14_snippet_3
+
+LANGUAGE: javascript
+CODE:
+```
+// @ts-check
+
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config({
+  plugins: {
+    '@typescript-eslint': tseslint.plugin,
+  },
+  languageOptions: {
+    parser: tseslint.parser,
+    parserOptions: {
+      project: true,
+    },
+  },
+  rules: {
+    '@typescript-eslint/no-unsafe-argument': 'error',
+    '@typescript-eslint/no-unsafe-assignment': 'error',
+    '@typescript-eslint/no-unsafe-call': 'error',
+    '@typescript-eslint/no-unsafe-member-access': 'error',
+    '@typescript-eslint/no-unsafe-return': 'error',
+  },
+});
+```
+
+----------------------------------------
+
+TITLE: Testing Untyped ESLint Rules with RuleTester
+DESCRIPTION: This snippet shows how to test an ESLint rule that doesn't require type information using the @typescript-eslint/rule-tester package. It creates a simple RuleTester instance without any special configuration.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/developers/Custom_Rules.mdx#2025-04-14_snippet_6
+
+LANGUAGE: typescript
+CODE:
+```
+import { RuleTester } from '@typescript-eslint/rule-tester';
+import rule from './my-rule';
+
+const ruleTester = new RuleTester();
+
+ruleTester.run('my-rule', rule, {
+  valid: [
+    /* ... */
+  ],
+  invalid: [
+    /* ... */
+  ],
+});
+```
+
+----------------------------------------
+
+TITLE: Configuring no-unused-vars Rule with TypeScript-style Underscore Patterns
+DESCRIPTION: JSON configuration example showing how to set up the no-unused-vars rule to ignore variables starting with underscore, similar to TypeScript's behavior.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/no-unused-vars.mdx#2025-04-14_snippet_0
+
+LANGUAGE: json
+CODE:
+```
+{
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "args": "all",
+        "argsIgnorePattern": "^_",
+        "caughtErrors": "all",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ]
+  }
+}
+```
+
+----------------------------------------
+
+TITLE: Using Generic Syntax with Default 'generic' Option - Correct Examples
+DESCRIPTION: Correct examples when using the 'generic' option which requires using Array<T>, ReadonlyArray<T>, or Readonly<Array<T>> syntax for arrays. This shows the proper generic type notation.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/array-type.mdx#2025-04-14_snippet_3
+
+LANGUAGE: typescript
+CODE:
+```
+const x: Array<string> = ['a', 'b'];
+const y: ReadonlyArray<string> = ['a', 'b'];
+const z: Readonly<Array<string>> = ['a', 'b'];
+```
+
+----------------------------------------
+
+TITLE: Incorrect Usage of indexOf in TypeScript
+DESCRIPTION: Examples of incorrect usage of indexOf method for checking element existence in arrays and strings. These patterns should be avoided and replaced with the includes method.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-includes.mdx#2025-04-14_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+const str: string;
+const array: any[];
+const readonlyArray: ReadonlyArray<any>;
+const typedArray: UInt8Array;
+const maybe: string;
+const userDefined: {
+  indexOf(x: any): number;
+  includes(x: any): boolean;
+};
+
+str.indexOf(value) !== -1;
+array.indexOf(value) !== -1;
+readonlyArray.indexOf(value) === -1;
+typedArray.indexOf(value) > -1;
+maybe?.indexOf('') !== -1;
+userDefined.indexOf(value) >= 0;
+
+/example/.test(str);
+```
+
+----------------------------------------
+
+TITLE: Configuring Typed Linting with ESLint Legacy Config
+DESCRIPTION: Demonstrates how to enable typed linting in the traditional ESLint config format by updating extends array and configuring parser options for TypeScript integration.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/getting-started/Typed_Linting.mdx#2025-04-14_snippet_1
+
+LANGUAGE: javascript
+CODE:
+```
+/* eslint-env node */
+module.exports = {
+  extends: [
+    'eslint:recommended',
+    // Remove this line
+    'plugin:@typescript-eslint/recommended',
+    // Add this line
+    'plugin:@typescript-eslint/recommended-type-checked',
+  ],
+  plugins: ['@typescript-eslint'],
+  parser: '@typescript-eslint/parser',
+  // Added lines start
+  parserOptions: {
+    projectService: true,
+    tsconfigRootDir: __dirname,
+  },
+  // Added lines end
+  root: true,
+};
+```
+
+----------------------------------------
+
+TITLE: Correct Enum Comparisons in TypeScript
+DESCRIPTION: These examples show the correct way to compare enum values in TypeScript. They use the enum member directly in comparisons, which is the pattern the ESLint rule encourages.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/no-unsafe-enum-comparison.mdx#2025-04-14_snippet_2
+
+LANGUAGE: typescript
+CODE:
+```
+enum Fruit {
+  Apple,
+}
+
+declare let fruit: Fruit;
+
+fruit === Fruit.Apple;
+
+enum Vegetable {
+  Asparagus = 'asparagus',
+}
+
+declare let vegetable: Vegetable;
+
+vegetable === Vegetable.Asparagus;
+```
+
+----------------------------------------
+
+TITLE: Configuring ESLint with stylistic-type-checked for TypeScript (Flat Config)
+DESCRIPTION: This snippet demonstrates how to set up ESLint using the stylistic-type-checked configuration in a flat config format for a TypeScript project.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/users/Shared_Configurations.mdx#2025-04-14_snippet_15
+
+LANGUAGE: javascript
+CODE:
+```
+export default tseslint.config(
+  tseslint.configs.stylisticTypeChecked,
+);
+```
+
+----------------------------------------
+
+TITLE: Configuring ESLint with TypeScript Extension Rules
+DESCRIPTION: This snippet demonstrates how to configure ESLint to use TypeScript-specific extension rules. It shows how to disable the base ESLint rule and enable the TypeScript-specific version for 'no-unused-vars'.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/README.md#2025-04-14_snippet_0
+
+LANGUAGE: javascript
+CODE:
+```
+module.exports = {
+  extends: ['eslint:recommended'],
+  rules: {
+    // Note: you must disable the base rule as it can report incorrect errors
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'error',
+  },
+};
+```
+
+----------------------------------------
+
+TITLE: TypeScript Interface Definition for Parse Options
+DESCRIPTION: Defines the interface for parse function options including source type, error handling, debugging, and AST node location tracking configurations.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/packages/TypeScript_ESTree.mdx#2025-04-14_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+interface ParseOptions {
+  sourceType?: SourceType;
+  allowInvalidAST?: boolean;
+  comment?: boolean;
+  suppressDeprecatedPropertyWarnings?: boolean;
+  debugLevel?: boolean | ('typescript-eslint' | 'eslint' | 'typescript')[];
+  errorOnUnknownASTType?: boolean;
+  filePath?: string;
+  jsDocParsingMode?: JSDocParsingMode;
+  jsx?: boolean;
+  loc?: boolean;
+  loggerFn?: Function | false;
+  range?: boolean;
+  tokens?: boolean;
+}
+```
+
+----------------------------------------
+
+TITLE: Correct Usage of Function Types in TypeScript
+DESCRIPTION: Examples of correct usage where function types are used instead of interfaces or object type literals with single call signatures.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-function-type.mdx#2025-04-14_snippet_1
+
+LANGUAGE: typescript
+CODE:
+```
+type Example = () => string;
+```
+
+LANGUAGE: typescript
+CODE:
+```
+function foo(example: () => number): number {
+  return bar();
+}
+```
+
+LANGUAGE: typescript
+CODE:
+```
+// returns the function itself, not the `this` argument.
+type ReturnsSelf = (arg: string) => ReturnsSelf;
+```
+
+LANGUAGE: typescript
+CODE:
+```
+function foo(bar: { (): string; baz: number }): string {
+  return bar();
+}
+```
+
+LANGUAGE: typescript
+CODE:
+```
+interface Foo {
+  bar: string;
+}
+interface Bar extends Foo {
+  (): void;
+}
+```
+
+LANGUAGE: typescript
+CODE:
+```
+// multiple call signatures (overloads) is allowed:
+interface Overloaded {
+  (data: string): number;
+  (id: number): string;
+}
+// this is equivelent to Overloaded interface.
+type Intersection = ((data: string) => number) & ((id: number) => string);
+```
+
+----------------------------------------
+
+TITLE: Using typescript-eslint Strict Config (Flat Config)
+DESCRIPTION: Example showing how to use the typescript-eslint strict configuration in flat config format. This provides more opinionated rules on top of the recommended config to catch potential bugs.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/users/Shared_Configurations.mdx#2025-04-14_snippet_9
+
+LANGUAGE: javascript
+CODE:
+```
+export default tseslint.config(
+  tseslint.configs.strict,
+);
+```
+
+----------------------------------------
+
+TITLE: Incorrect Usage of Unbound Methods in TypeScript
+DESCRIPTION: Examples showing problematic cases where class methods are used without proper binding, which can lead to incorrect 'this' context.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/unbound-method.mdx#2025-04-14_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+class MyClass {
+  public log(): void {
+    console.log(this);
+  }
+}
+
+const instance = new MyClass();
+
+// This logs the global scope (`window`/`global`), not the class instance
+const myLog = instance.log;
+myLog();
+
+// This log might later be called with an incorrect scope
+const { log } = instance;
+
+// arith.double may refer to `this` internally
+const arith = {
+  double(x: number): number {
+    return x * 2;
+  },
+};
+const { double } = arith;
+```
+
+----------------------------------------
+
+TITLE: Basic Flat Config Setup with typescript-eslint
+DESCRIPTION: This JavaScript code demonstrates the simplest setup for using typescript-eslint with flat configs. It enables ESLint's recommended config and typescript-eslint's recommended config.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/website/blog/2024-02-12-announcing-typescript-eslint-v7.md#2025-04-14_snippet_2
+
+LANGUAGE: javascript
+CODE:
+```
+// @ts-check
+
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
+);
+```
+
+----------------------------------------
+
+TITLE: Correct Usage of Bound Methods in TypeScript
+DESCRIPTION: Examples demonstrating proper method binding using arrow functions, .bind(), and explicit this:void declarations.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/unbound-method.mdx#2025-04-14_snippet_1
+
+LANGUAGE: typescript
+CODE:
+```
+class MyClass {
+  public logUnbound(): void {
+    console.log(this);
+  }
+
+  public logBound = () => console.log(this);
+}
+
+const instance = new MyClass();
+
+// logBound will always be bound with the correct scope
+const { logBound } = instance;
+logBound();
+
+// .bind and lambdas will also add a correct scope
+const dotBindLog = instance.logUnbound.bind(instance);
+const innerLog = () => instance.logUnbound();
+
+// arith.double explicitly declares that it does not refer to `this` internally
+const arith = {
+  double(this: void, x: number): number {
+    return x * 2;
+  },
+};
+const { double } = arith;
+```
+
+----------------------------------------
+
+TITLE: Configuring ESLint for Quoted Property Names
+DESCRIPTION: ESLint configuration to ignore property names that require quotes using the requiresQuotes modifier. This is useful for cases where quoted names are necessary, such as HTTP headers.
+SOURCE: https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/naming-convention.mdx#2025-04-14_snippet_11
+
+LANGUAGE: jsonc
+CODE:
+```
+{
+  "@typescript-eslint/naming-convention": [
+    "error",
+    {
+      "selector": [
+        "classProperty",
+        "objectLiteralProperty",
+        "typeProperty",
+        "classMethod",
+        "objectLiteralMethod",
+        "typeMethod",
+        "accessor",
+        "enumMember",
+      ],
+      "format": null,
+      "modifiers": ["requiresQuotes"],
+    },
+  ],
+}
+```

@@ -1,0 +1,683 @@
+TITLE: Implementing shadcn/ui Button Component
+DESCRIPTION: Example of importing and using the Button component in a Next.js page component.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/installation/next.mdx#2025-04-19_snippet_2
+
+LANGUAGE: tsx
+CODE:
+```
+import { Button } from "@/components/ui/button"
+
+export default function Home() {
+  return (
+    <div>
+      <Button>Click me</Button>
+    </div>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Integrating ThemeProvider in Root Layout Component
+DESCRIPTION: This snippet demonstrates how to integrate the ThemeProvider into the root component (App.tsx) of a Vite application. It wraps the application with the provider, configuring a default dark theme and specifying a storage key for persisting theme preferences in localStorage.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/dark-mode/vite.mdx#2025-04-19_snippet_1
+
+LANGUAGE: tsx
+CODE:
+```
+import { ThemeProvider } from "@/components/theme-provider"
+
+function App() {
+  return (
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      {children}
+    </ThemeProvider>
+  )
+}
+
+export default App
+```
+
+----------------------------------------
+
+TITLE: Implementing Row Selection with Checkbox Controls
+DESCRIPTION: Adds row selection functionality to the data table by defining a special selection column with checkboxes. Includes a header checkbox for selecting all rows and individual row checkboxes that integrate with TanStack's row selection API.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/components/data-table.mdx#2025-04-19_snippet_14
+
+LANGUAGE: tsx
+CODE:
+```
+"use client"
+
+import { ColumnDef } from "@tanstack/react-table"
+
+import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
+
+export const columns: ColumnDef<Payment>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+]
+```
+
+----------------------------------------
+
+TITLE: Defining a Form with React Hook Form and Zod
+DESCRIPTION: Shows how to create a form using useForm hook with Zod resolver for validation, setting up default values and a type-safe submit handler.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/components/form.mdx#2025-04-19_snippet_5
+
+LANGUAGE: tsx
+CODE:
+```
+"use client"
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
+const formSchema = z.object({
+  username: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+})
+
+export function ProfileForm() {
+  // 1. Define your form.
+  const form = useForm<z.infer<typeof formSchema>>{
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+    },
+  }
+
+  // 2. Define a submit handler.
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values)
+  }
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing DataTable Component with Row Selection in React
+DESCRIPTION: This code defines a DataTable component with sorting, filtering, pagination, column visibility, and row selection capabilities using React and TanStack Table.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/components/data-table.mdx#2025-04-19_snippet_15
+
+LANGUAGE: tsx
+CODE:
+```
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  )
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = React.useState({})
+
+  const table = useReactTable({
+    data,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+  })
+
+  return (
+    <div>
+      <div className="rounded-md border">
+        <Table />
+      </div>
+    </div>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Using Button Component with Outline Variant
+DESCRIPTION: Example of using the Button component with the outline variant property in a React application.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/components/button.mdx#2025-04-19_snippet_3
+
+LANGUAGE: tsx
+CODE:
+```
+<Button variant="outline">Button</Button>
+```
+
+----------------------------------------
+
+TITLE: Implementing a Complete Registry.json File in ShadCN UI
+DESCRIPTION: A complete example of a registry.json file that defines a custom component registry with a single hello-world component. This shows the full structure with schema definition, registry metadata, and item definition.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/registry/registry-json.mdx#2025-04-19_snippet_0
+
+LANGUAGE: json
+CODE:
+```
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "shadcn",
+  "homepage": "https://ui.shadcn.com",
+  "items": [
+    {
+      "name": "hello-world",
+      "type": "registry:block",
+      "title": "Hello World",
+      "description": "A simple hello world component.",
+      "files": [
+        {
+          "path": "registry/new-york/hello-world/hello-world.tsx",
+          "type": "registry:component"
+        }
+      ]
+    }
+  ]
+}
+```
+
+----------------------------------------
+
+TITLE: Initializing shadcn/ui in Next.js Project
+DESCRIPTION: Command to create a new Next.js project or configure an existing one with shadcn/ui.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/installation/next.mdx#2025-04-19_snippet_0
+
+LANGUAGE: bash
+CODE:
+```
+npx shadcn@latest init
+```
+
+----------------------------------------
+
+TITLE: Implementing Sidebar with Footer and User Dropdown
+DESCRIPTION: Demonstrates a complete sidebar implementation with footer containing a user dropdown menu. Shows how to structure a sidebar with header, content, and footer sections in a properly nested component hierarchy.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/components/sidebar.mdx#2025-04-19_snippet_18
+
+LANGUAGE: tsx
+CODE:
+```
+export function AppSidebar() {
+  return (
+    <SidebarProvider>
+      <Sidebar>
+        <SidebarHeader />
+        <SidebarContent />
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton>
+                    <User2 /> Username
+                    <ChevronUp className="ml-auto" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  className="w-[--radix-popper-anchor-width]"
+                >
+                  <DropdownMenuItem>
+                    <span>Account</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <span>Billing</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
+    </SidebarProvider>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Adding shadcn/ui Components
+DESCRIPTION: Command to add specific components from shadcn/ui to your Next.js project. This example adds the Button component.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/installation/next.mdx#2025-04-19_snippet_1
+
+LANGUAGE: bash
+CODE:
+```
+npx shadcn@latest add button
+```
+
+----------------------------------------
+
+TITLE: Adding Components with shadcn CLI
+DESCRIPTION: The 'add' command adds a specific component to your project and installs all required dependencies.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/packages/shadcn/README.md#2025-04-19_snippet_1
+
+LANGUAGE: bash
+CODE:
+```
+npx shadcn add [component]
+```
+
+----------------------------------------
+
+TITLE: Defining Complete Registry Item Schema in JSON
+DESCRIPTION: Example showing a complete registry-item.json with all basic configuration options including schema reference, name, type, files and CSS variables.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/registry/registry-item-json.mdx#2025-04-19_snippet_0
+
+LANGUAGE: json
+CODE:
+```
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "hello-world",
+  "type": "registry:block",
+  "title": "Hello World",
+  "description": "A simple hello world component.",
+  "files": [
+    {
+      "path": "registry/new-york/hello-world/hello-world.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "registry/new-york/hello-world/use-hello-world.ts",
+      "type": "registry:hook"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-heading": "Poppins, sans-serif"
+    },
+    "light": {
+      "brand": "20 14.3% 4.1%"
+    },
+    "dark": {
+      "brand": "20 14.3% 4.1%"
+    }
+  }
+}
+```
+
+----------------------------------------
+
+TITLE: Using Switch Component in React JSX
+DESCRIPTION: Example of how to use the Switch component in React JSX.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/components/switch.mdx#2025-04-19_snippet_3
+
+LANGUAGE: tsx
+CODE:
+```
+<Switch />
+```
+
+----------------------------------------
+
+TITLE: Creating a Theme Toggle Dropdown Component
+DESCRIPTION: This code creates a ModeToggle component with a dropdown menu for switching between light, dark, and system themes. It uses the useTheme hook to access theme state and includes animated sun/moon icons that transition based on the current theme, providing visual feedback to users.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/dark-mode/vite.mdx#2025-04-19_snippet_2
+
+LANGUAGE: tsx
+CODE:
+```
+import { Moon, Sun } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useTheme } from "@/components/theme-provider"
+
+export function ModeToggle() {
+  const { setTheme } = useTheme()
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon">
+          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme("light")}>
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
+          System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing Sorting in TanStack React Table
+DESCRIPTION: Adds sorting capability to the data table by using TanStack's getSortedRowModel() and managing sorting state with React.useState(). This implementation enables the table to respond to sorting interactions.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/components/data-table.mdx#2025-04-19_snippet_10
+
+LANGUAGE: tsx
+CODE:
+```
+"use client"
+
+import * as React from "react"
+import {
+  ColumnDef,
+  SortingState,
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table"
+
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = React.useState<SortingState>([])
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
+  })
+
+  return (
+    <div>
+      <div className="rounded-md border">
+        <Table>{ ... }</Table>
+      </div>
+    </div>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Basic Table Component Usage
+DESCRIPTION: Example of a basic table implementation showing an invoice list with header, body, and caption. Demonstrates table structure with sample data.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/components/table.mdx#2025-04-19_snippet_2
+
+LANGUAGE: tsx
+CODE:
+```
+<Table>
+  <TableCaption>A list of your recent invoices.</TableCaption>
+  <TableHeader>
+    <TableRow>
+      <TableHead className="w-[100px]">Invoice</TableHead>
+      <TableHead>Status</TableHead>
+      <TableHead>Method</TableHead>
+      <TableHead className="text-right">Amount</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell className="font-medium">INV001</TableCell>
+      <TableCell>Paid</TableCell>
+      <TableCell>Credit Card</TableCell>
+      <TableCell className="text-right">$250.00</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+```
+
+----------------------------------------
+
+TITLE: Form Component Anatomy Example in React
+DESCRIPTION: Shows the basic structure of the Form component with nested FormField components including FormItem, FormLabel, FormControl, FormDescription, and FormMessage.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/components/form.mdx#2025-04-19_snippet_0
+
+LANGUAGE: tsx
+CODE:
+```
+<Form>
+  <FormField
+    control={...}
+    name="..."
+    render={() => (
+      <FormItem>
+        <FormLabel />
+        <FormControl>
+          { /* Your form field */}
+        </FormControl>
+        <FormDescription />
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+</Form>
+```
+
+----------------------------------------
+
+TITLE: Adding Toaster Component to Root Layout with CLI Method
+DESCRIPTION: Code to add the Toaster component to your application's root layout for displaying toast notifications. Import the Toaster and place it at the bottom of the body element.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/components/toast.mdx#2025-04-19_snippet_1
+
+LANGUAGE: tsx
+CODE:
+```
+import { Toaster } from "@/components/ui/toaster"
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <head />
+      <body>
+        <main>{children}</main>
+        <Toaster />
+      </body>
+    </html>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Creating a ThemeProvider Component in Next.js
+DESCRIPTION: A client-side component that wraps the next-themes provider to enable theme switching functionality throughout the application.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/dark-mode/next.mdx#2025-04-19_snippet_1
+
+LANGUAGE: tsx
+CODE:
+```
+"use client"
+
+import * as React from "react"
+import { ThemeProvider as NextThemesProvider } from "next-themes"
+
+export function ThemeProvider({
+  children,
+  ...props
+}: React.ComponentProps<typeof NextThemesProvider>) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+}
+```
+
+----------------------------------------
+
+TITLE: Updating React Peer Dependencies for React 19 Support
+DESCRIPTION: Diff showing the changes needed in package.json to add React 19 as a peer dependency, allowing the package to work with the new version.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/react-19.mdx#2025-04-19_snippet_0
+
+LANGUAGE: diff
+CODE:
+```
+"peerDependencies": {
+-  "react": "^16.8 || ^17.0 || ^18.0",
++  "react": "^16.8 || ^17.0 || ^18.0 || ^19.0",
+-  "react-dom": "^16.8 || ^17.0 || ^18.0"
++  "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0"
+},
+```
+
+----------------------------------------
+
+TITLE: Building a Complete Form with React Hook Form Components
+DESCRIPTION: Full example of a profile form implementation using Form components with validation, styling, and submit handling.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/components/form.mdx#2025-04-19_snippet_6
+
+LANGUAGE: tsx
+CODE:
+```
+"use client"
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+
+const formSchema = z.object({
+  username: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+})
+
+export function ProfileForm() {
+  // ...
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input placeholder="shadcn" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  )
+}
+```
+
+----------------------------------------
+
+TITLE: Configuring ThemeProvider in Remix Root Layout
+DESCRIPTION: Implements ThemeProvider in the root layout to enable theme switching. Includes a loader for retrieving the theme from session storage and proper HTML class application for theme styling.
+SOURCE: https://github.com/shadcn-ui/ui/blob/main/apps/www/content/docs/dark-mode/remix.mdx#2025-04-19_snippet_3
+
+LANGUAGE: tsx
+CODE:
+```
+import clsx from "clsx"
+import { PreventFlashOnWrongTheme, ThemeProvider, useTheme } from "remix-themes"
+
+import { themeSessionResolver } from "./sessions.server"
+
+// Return the theme from the session storage using the loader
+export async function loader({ request }: LoaderFunctionArgs) {
+  const { getTheme } = await themeSessionResolver(request)
+  return {
+    theme: getTheme(),
+  }
+}
+// Wrap your app with ThemeProvider.
+// `specifiedTheme` is the stored theme in the session storage.
+// `themeAction` is the action name that's used to change the theme in the session storage.
+export default function AppWithProviders() {
+  const data = useLoaderData<typeof loader>()
+  return (
+    <ThemeProvider specifiedTheme={data.theme} themeAction="/action/set-theme">
+      <App />
+    </ThemeProvider>
+  )
+}
+
+export function App() {
+  const data = useLoaderData<typeof loader>()
+  const [theme] = useTheme()
+  return (
+    <html lang="en" className={clsx(theme)}>
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <PreventFlashOnWrongTheme ssrTheme={Boolean(data.theme)} />
+        <Links />
+      </head>
+      <body>
+        <Outlet />
+        <ScrollRestoration />
+        <Scripts />
+        <LiveReload />
+      </body>
+    </html>
+  )
+```

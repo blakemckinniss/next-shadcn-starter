@@ -1,0 +1,704 @@
+TITLE: Configuring SQL Server Datasource in Prisma Schema
+DESCRIPTION: This snippet shows how to set up the datasource block in the Prisma schema file to connect to a SQL Server database. It uses an environment variable for the connection URL.
+SOURCE: https://github.com/prisma/docs/blob/main/content/100-getting-started/02-setup-prisma/200-add-to-existing-project/110-relational-databases/100-connect-your-database-typescript-sqlserver.mdx#2025-04-07_snippet_0
+
+LANGUAGE: prisma
+CODE:
+```
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+```
+
+----------------------------------------
+
+TITLE: Initializing Prisma Client in TypeScript
+DESCRIPTION: Sets up a basic TypeScript file to use Prisma Client. It imports PrismaClient, instantiates it, and defines an async main function for database operations.
+SOURCE: https://github.com/prisma/docs/blob/main/content/100-getting-started/02-setup-prisma/100-start-from-scratch/110-relational-databases/250-querying-the-database-typescript-cockroachdb.mdx#2025-04-07_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
+
+async function main() {
+  // ... you will write your Prisma Client queries here
+}
+
+main()
+  .then(async () => {
+    await prisma.$disconnect()
+  })
+  .catch(async (e) => {
+    console.error(e)
+    await prisma.$disconnect()
+    process.exit(1)
+  })
+```
+
+----------------------------------------
+
+TITLE: Selecting Specific Fields with Prisma Client in TypeScript
+DESCRIPTION: Uses findUnique() with select to return only the email and name fields of a specific User record identified by email.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/030-crud.mdx#2025-04-07_snippet_15
+
+LANGUAGE: typescript
+CODE:
+```
+const user = await prisma.user.findUnique({
+  where: {
+    email: 'emma@prisma.io',
+  },
+  select: {
+    email: true,
+    name: true,
+  },
+})
+```
+
+----------------------------------------
+
+TITLE: Initializing Prisma Client in TypeScript
+DESCRIPTION: Sets up a basic TypeScript file to use Prisma Client. It imports PrismaClient, instantiates it, and defines an async main function for database operations.
+SOURCE: https://github.com/prisma/docs/blob/main/content/100-getting-started/02-setup-prisma/100-start-from-scratch/110-relational-databases/250-querying-the-database-typescript-cockroachdb.mdx#2025-04-07_snippet_0
+
+LANGUAGE: typescript
+CODE:
+```
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
+
+async function main() {
+  // ... you will write your Prisma Client queries here
+}
+
+main()
+  .then(async () => {
+    await prisma.$disconnect()
+  })
+  .catch(async (e) => {
+    console.error(e)
+    await prisma.$disconnect()
+    process.exit(1)
+  })
+```
+
+----------------------------------------
+
+TITLE: Configuring SQL Server Datasource in Prisma Schema
+DESCRIPTION: Defines the database connection configuration in the Prisma schema file. Uses environment variables for the connection URL and specifies SQL Server as the provider.
+SOURCE: https://github.com/prisma/docs/blob/main/content/100-getting-started/02-setup-prisma/200-add-to-existing-project/110-relational-databases/100-connect-your-database-node-sqlserver.mdx#2025-04-07_snippet_0
+
+LANGUAGE: prisma
+CODE:
+```
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+```
+
+----------------------------------------
+
+TITLE: Finding a MongoDB Record by ObjectId String
+DESCRIPTION: Example of retrieving a MongoDB record using the string representation of an ObjectId. This is specific to the MongoDB connector where the underlying ID type is ObjectId.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/030-crud.mdx#2025-04-07_snippet_9
+
+LANGUAGE: typescript
+CODE:
+```
+// By ID
+const user = await prisma.user.findUnique({
+  where: {
+    id: '60d5922d00581b8f0062e3a8',
+  },
+})
+```
+
+----------------------------------------
+
+TITLE: Creating Nested Records with Prisma Client in TypeScript
+DESCRIPTION: This snippet shows how to create a new User record along with related Post and Profile records using a nested write query. It also demonstrates how to include related records in the query results.
+SOURCE: https://github.com/prisma/docs/blob/main/content/100-getting-started/02-setup-prisma/100-start-from-scratch/110-relational-databases/250-querying-the-database-typescript-prismaPostgres.mdx#2025-04-07_snippet_2
+
+LANGUAGE: typescript
+CODE:
+```
+async function main() {
+  await prisma.user.create({
+    data: {
+      name: 'Alice',
+      email: 'alice@prisma.io',
+      posts: {
+        create: { title: 'Hello World' },
+      },
+      profile: {
+        create: { bio: 'I like turtles' },
+      },
+    },
+  })
+
+  const allUsers = await prisma.user.findMany({
+    include: {
+      posts: true,
+      profile: true,
+    },
+  })
+  console.dir(allUsers, { depth: null })
+}
+```
+
+----------------------------------------
+
+TITLE: Installing Prisma CLI as Development Dependency
+DESCRIPTION: This command installs the Prisma CLI as a development dependency in your project. It's the first step in setting up Prisma ORM in an existing project.
+SOURCE: https://github.com/prisma/docs/blob/main/content/100-getting-started/02-setup-prisma/200-add-to-existing-project/110-relational-databases-typescript-planetscale.mdx#2025-04-07_snippet_0
+
+LANGUAGE: bash
+CODE:
+```
+npm install prisma --save-dev
+```
+
+----------------------------------------
+
+TITLE: Installing Prisma CLI as Development Dependency
+DESCRIPTION: Command to install the Prisma CLI as a development dependency in your Node.js/TypeScript project. This is the first step to set up Prisma ORM in an existing project.
+SOURCE: https://github.com/prisma/docs/blob/main/content/100-getting-started/02-setup-prisma/200-add-to-existing-project/110-relational-databases-typescript-postgresql.mdx#2025-04-07_snippet_0
+
+LANGUAGE: bash
+CODE:
+```
+npm install prisma --save-dev
+```
+
+----------------------------------------
+
+TITLE: Creating and Returning Multiple User Records
+DESCRIPTION: Example of creating multiple user records and getting the created records back in a single operation using createManyAndReturn(). This feature is available in Prisma ORM 5.14.0+ for PostgreSQL, CockroachDB, and SQLite.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/030-crud.mdx#2025-04-07_snippet_7
+
+LANGUAGE: typescript
+CODE:
+```
+const users = await prisma.user.createManyAndReturn({
+  data: [
+    { name: 'Alice', email: 'alice@prisma.io' },
+    { name: 'Bob', email: 'bob@prisma.io' },
+  ],
+})
+```
+
+----------------------------------------
+
+TITLE: Sample Schema Definition for Relational Databases in Prisma
+DESCRIPTION: A sample Prisma schema definition for relational databases including models for User, Post, Category, and ExtendedProfile with relationships between them. This schema serves as the foundation for the CRUD examples.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/030-crud.mdx#2025-04-07_snippet_0
+
+LANGUAGE: prisma
+CODE:
+```
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ExtendedProfile {
+  id        Int    @id @default(autoincrement())
+  biography String
+  user      User   @relation(fields: [userId], references: [id])
+  userId    Int    @unique
+}
+
+model User {
+  id           Int              @id @default(autoincrement())
+  name         String?
+  email        String           @unique
+  profileViews Int              @default(0)
+  role         Role             @default(USER)
+  coinflips    Boolean[]
+  posts        Post[]
+  profile      ExtendedProfile?
+}
+
+model Post {
+  id         Int        @id @default(autoincrement())
+  title      String
+  published  Boolean    @default(true)
+  author     User       @relation(fields: [authorId], references: [id])
+  authorId   Int
+  comments   Json?
+  views      Int        @default(0)
+  likes      Int        @default(0)
+  categories Category[]
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  posts Post[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+```
+
+----------------------------------------
+
+TITLE: Implementing Money Transfer with Prisma Interactive Transactions
+DESCRIPTION: Example of a secure money transfer implementation using Prisma transactions to ensure data consistency. Includes balance verification and automatic rollback on failure.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/058-transactions.mdx#2025-04-07_snippet_6
+
+LANGUAGE: tsx
+CODE:
+```
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+
+function transfer(from: string, to: string, amount: number) {
+  return prisma.$transaction(async (tx) => {
+    // 1. Decrement amount from the sender.
+    const sender = await tx.account.update({
+      data: {
+        balance: {
+          decrement: amount,
+        },
+      },
+      where: {
+        email: from,
+      },
+    })
+
+    // 2. Verify that the sender's balance didn't go below zero.
+    if (sender.balance < 0) {
+      throw new Error(`${from} doesn't have enough to send ${amount}`)
+    }
+
+    // 3. Increment the recipient's balance by amount
+    const recipient = await tx.account.update({
+      data: {
+        balance: {
+          increment: amount,
+        },
+      },
+      where: {
+        email: to,
+      },
+    })
+
+    return recipient
+  })
+}
+
+async function main() {
+  // This transfer is successful
+  await transfer('alice@prisma.io', 'bob@prisma.io', 100)
+  // This transfer fails because Alice doesn't have enough funds in her account
+  await transfer('alice@prisma.io', 'bob@prisma.io', 100)
+}
+
+main()
+```
+
+----------------------------------------
+
+TITLE: Raw Query Transactions for Relational Databases
+DESCRIPTION: Example of executing raw SQL queries within a transaction.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/058-transactions.mdx#2025-04-07_snippet_3
+
+LANGUAGE: typescript
+CODE:
+```
+import { selectUserTitles, updateUserName } from '@prisma/client/sql'
+
+const [userList, updateUser] = await prisma.$transaction([
+  prisma.$queryRawTyped(selectUserTitles()),
+  prisma.$queryRawTyped(updateUserName(2)),
+])
+```
+
+----------------------------------------
+
+TITLE: Case-Insensitive Filtering in Prisma Client
+DESCRIPTION: This snippet shows how to perform case-insensitive filtering by using the 'mode' property. It filters users by email (case-insensitive) and name (case-sensitive).
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/050-filtering-and-sorting.mdx#2025-04-07_snippet_7
+
+LANGUAGE: typescript
+CODE:
+```
+const users = await prisma.user.findMany({
+  where: {
+    email: {
+      endsWith: 'prisma.io',
+      mode: 'insensitive', // Default value: default
+    },
+    name: {
+      equals: 'Archibald', // Default mode
+    },
+  },
+})
+```
+
+----------------------------------------
+
+TITLE: Installing Prisma CLI Dependency
+DESCRIPTION: Command to install Prisma CLI as a development dependency in an existing Node.js project using npm.
+SOURCE: https://github.com/prisma/docs/blob/main/content/100-getting-started/02-setup-prisma/200-add-to-existing-project/110-relational-databases-node-postgresql.mdx#2025-04-07_snippet_0
+
+LANGUAGE: terminal
+CODE:
+```
+npm install prisma --save-dev
+```
+
+----------------------------------------
+
+TITLE: Creating Nested Records with Prisma Client in TypeScript
+DESCRIPTION: This advanced query example demonstrates how to create a deeply nested tree of records, including a User, related Post records, and connected or created Category records for each post.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/030-crud.mdx#2025-04-07_snippet_30
+
+LANGUAGE: typescript
+CODE:
+```
+const u = await prisma.user.create({
+  include: {
+    posts: {
+      include: {
+        categories: true,
+      },
+    },
+  },
+  data: {
+    email: 'emma@prisma.io',
+    posts: {
+      create: [
+        {
+          title: 'My first post',
+          categories: {
+            connectOrCreate: [
+              {
+                create: { name: 'Introductions' },
+                where: {
+                  name: 'Introductions',
+                },
+              },
+              {
+                create: { name: 'Social' },
+                where: {
+                  name: 'Social',
+                },
+              },
+            ],
+          },
+        },
+        {
+          title: 'How to make cookies',
+          categories: {
+            connectOrCreate: [
+              {
+                create: { name: 'Social' },
+                where: {
+                  name: 'Social',
+                },
+              },
+              {
+                create: { name: 'Cooking' },
+                where: {
+                  name: 'Cooking',
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
+})
+```
+
+----------------------------------------
+
+TITLE: Defining Relation Fields in Prisma Schema for MongoDB
+DESCRIPTION: This snippet demonstrates how to define relation fields and relation scalar fields in a Prisma schema for MongoDB. It shows a one-to-many relation between User and Post models using ObjectId types.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/100-prisma-schema/20-data-model/20-relations/index.mdx#2025-04-07_snippet_10
+
+LANGUAGE: prisma
+CODE:
+```
+model User {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  email String @unique
+  role  Role   @default(USER)
+  posts Post[] // relation field (defined only at the Prisma ORM level)
+}
+
+model Post {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  title    String
+  author   User   @relation(fields: [authorId], references: [id]) // relation field (uses the relation scalar field `authorId` below)
+  authorId String @db.ObjectId // relation scalar field (used in the `@relation` attribute above)
+}
+```
+
+----------------------------------------
+
+TITLE: Selecting Specific Fields from Related Records
+DESCRIPTION: Query showing how to select specific fields from both a parent record and its related records using nested select statements.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/037-relation-queries.mdx#2025-04-07_snippet_6
+
+LANGUAGE: typescript
+CODE:
+```
+const user = await prisma.user.findFirst({
+  select: {
+    name: true,
+    posts: {
+      select: {
+        title: true,
+      },
+    },
+  },
+})
+```
+
+----------------------------------------
+
+TITLE: Using Nested CreateMany in Prisma Client
+DESCRIPTION: This snippet shows how to use nested `createMany` to create a user and multiple related posts in a single operation. It demonstrates the use of `createMany` within a `create` query and includes the created posts in the result.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/037-relation-queries.mdx#2025-04-07_snippet_15
+
+LANGUAGE: typescript
+CODE:
+```
+const result = await prisma.user.create({
+  data: {
+    email: 'saanvi@prisma.io',
+    posts: {
+      createMany: {
+        data: [{ title: 'My first post' }, { title: 'My second post' }],
+      },
+    },
+  },
+  include: {
+    posts: true,
+  },
+})
+```
+
+----------------------------------------
+
+TITLE: Creating Multiple Records with Relations (Invalid Example)
+DESCRIPTION: Demonstrates that createMany() cannot handle nested relations, showing an invalid attempt to create multiple users with posts.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/037-relation-queries.mdx#2025-04-07_snippet_17
+
+LANGUAGE: typescript
+CODE:
+```
+const createMany = await prisma.user.createMany({
+  data: [
+    {
+      name: 'Yewande',
+      email: 'yewande@prisma.io',
+      posts: {
+        // Not possible to create posts!
+      },
+    },
+    {
+      name: 'Noor',
+      email: 'noor@prisma.io',
+      posts: {
+        // Not possible to create posts!
+      },
+    },
+  ],
+})
+```
+
+----------------------------------------
+
+TITLE: Creating a Team and User with Nested Writes in Prisma
+DESCRIPTION: This example shows how to use nested writes to create a team and a user simultaneously, ensuring that both operations are part of a single atomic transaction. This approach is useful for scenarios like sign-up flows where related records need to be created together.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/058-transactions.mdx#2025-04-07_snippet_15
+
+LANGUAGE: typescript
+CODE:
+```
+const team = await prisma.team.create({
+  data: {
+    name: 'Aurora Adventures',
+    members: {
+      create: {
+        email: 'alice@prisma.io',
+      },
+    },
+  },
+})
+```
+
+----------------------------------------
+
+TITLE: Finding First Matching Record with Prisma Client in TypeScript
+DESCRIPTION: Uses findFirst() to get the most recently created user with at least one post that has more than 100 likes. Orders users by descending ID and filters based on post likes.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/030-crud.mdx#2025-04-07_snippet_11
+
+LANGUAGE: typescript
+CODE:
+```
+const findUser = await prisma.user.findFirst({
+  where: {
+    posts: {
+      some: {
+        likes: {
+          gt: 100,
+        },
+      },
+    },
+  },
+  orderBy: {
+    id: 'desc',
+  },
+})
+```
+
+----------------------------------------
+
+TITLE: Connect or Create Related Record
+DESCRIPTION: Creates a new post and either connects it to an existing user or creates a new user if one doesn't exist.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/037-relation-queries.mdx#2025-04-07_snippet_20
+
+LANGUAGE: typescript
+CODE:
+```
+const result = await prisma.post.create({
+  data: {
+    title: 'How to make croissants',
+    author: {
+      connectOrCreate: {
+        where: {
+          email: 'viola@prisma.io',
+        },
+        create: {
+          email: 'viola@prisma.io',
+          name: 'Viola',
+        },
+      },
+    },
+  },
+  include: {
+    author: true,
+  },
+})
+```
+
+----------------------------------------
+
+TITLE: Using findUniqueOrThrow to Query User by ID in TypeScript
+DESCRIPTION: Retrieves a single User record by ID or throws an error if not found. Unlike findUnique, this method ensures a record is returned or throws a PrismaClientKnownRequestError if the record doesn't exist.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/500-reference/050-prisma-client-reference.mdx#2025-04-07_snippet_21
+
+LANGUAGE: typescript
+CODE:
+```
+await prisma.user.findUniqueOrThrow({
+  where: { id: 1 },
+});
+```
+
+----------------------------------------
+
+TITLE: Example SQL Query Generated by createMany()
+DESCRIPTION: An example of the SQL query generated by Prisma when using the createMany() method. This shows how Prisma optimizes the operation into a single INSERT statement with multiple values for better performance.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/030-crud.mdx#2025-04-07_snippet_6
+
+LANGUAGE: sql
+CODE:
+```
+BEGIN
+INSERT INTO "public"."User" ("id","name","email","profileViews","role","coinflips","testing","city","country") VALUES (DEFAULT,$1,$2,$3,$4,DEFAULT,DEFAULT,DEFAULT,$5), (DEFAULT,$6,$7,$8,$9,DEFAULT,DEFAULT,DEFAULT,$10), (DEFAULT,$11,$12,$13,$14,DEFAULT,DEFAULT,DEFAULT,$15), (DEFAULT,$16,$17,$18,$19,DEFAULT,DEFAULT,DEFAULT,$20) ON CONFLICT DO NOTHING
+COMMIT
+SELECT "public"."User"."country", "public"."User"."city", "public"."User"."email", SUM("public"."User"."profileViews"), COUNT(*) FROM "public"."User" WHERE 1=1 GROUP BY "public"."User"."country", "public"."User"."city", "public"."User"."email" HAVING AVG("public"."User"."profileViews") >= $1 ORDER BY "public"."User"."country" ASC OFFSET $2
+```
+
+----------------------------------------
+
+TITLE: Sorting Users with Nested Posts in Prisma Client
+DESCRIPTION: This query demonstrates how to sort a list of records and their nested relations. It returns all User records sorted by role and name, with each user's posts sorted by title.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/200-prisma-client/100-queries/050-filtering-and-sorting.mdx#2025-04-07_snippet_8
+
+LANGUAGE: typescript
+CODE:
+```
+const usersWithPosts = await prisma.user.findMany({
+  orderBy: [
+    {
+      role: 'desc',
+    },
+    {
+      name: 'desc',
+    },
+  ],
+  include: {
+    posts: {
+      orderBy: {
+        title: 'desc',
+      },
+      select: {
+        title: true,
+      },
+    },
+  },
+})
+```
+
+----------------------------------------
+
+TITLE: Defining Prisma Schema for Relational Databases
+DESCRIPTION: This code snippet demonstrates a Prisma schema for relational databases, specifically PostgreSQL. It includes data source configuration, generator settings, and model definitions for User and Post with an enum for Role.
+SOURCE: https://github.com/prisma/docs/blob/main/content/200-orm/100-prisma-schema/10-overview/index.mdx#2025-04-07_snippet_0
+
+LANGUAGE: prisma
+CODE:
+```
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  email     String   @unique
+  name      String?
+  role      Role     @default(USER)
+  posts     Post[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  published Boolean  @default(false)
+  title     String   @db.VarChar(255)
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+```

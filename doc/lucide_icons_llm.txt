@@ -1,0 +1,952 @@
+TITLE: Advanced Configuration with createIcons
+DESCRIPTION: Example showing how to use the createIcons function with additional options. Demonstrates how to add custom attributes like classes and adjust icon parameters such as stroke width and color.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide.md#2025-04-10_snippet_4
+
+LANGUAGE: js
+CODE:
+```
+import { createIcons } from 'lucide';
+
+createIcons({
+  attrs: {
+    class: ['my-custom-class', 'icon'],
+    'stroke-width': 1,
+    stroke: '#333'
+  },
+  nameAttr: 'data-lucide' // attribute for the icon name.
+});
+```
+
+----------------------------------------
+
+TITLE: Using Lucide Icons in Vue
+DESCRIPTION: Shows how to import and use Lucide icons in a Vue component. It demonstrates both default and named imports, and how to pass props for customization.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/how-to-use-icons.md#2025-04-10_snippet_2
+
+LANGUAGE: html
+CODE:
+```
+<script setup>
+import { AlertTriangle } from 'lucide-vue-next';
+import LucideSettings from 'lucide-vue-next/dist/esm/icons/settings';
+</script>
+
+<template>
+  <AlertTriangle color="red" :size="48" />
+  <LucideSettings color="blue" :size="24" />
+</template>
+```
+
+----------------------------------------
+
+TITLE: Using Lucide Icons in Svelte
+DESCRIPTION: Illustrates how to import and use Lucide icons in a Svelte component. It shows both default and named imports, and demonstrates passing props for customization.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/how-to-use-icons.md#2025-04-10_snippet_3
+
+LANGUAGE: html
+CODE:
+```
+<script>
+import { AlertTriangle } from 'lucide-svelte';
+import LucideSettings from 'lucide-svelte/dist/esm/icons/settings';
+</script>
+
+<AlertTriangle color="red" size={48} />
+<LucideSettings color="blue" size={24} />
+```
+
+----------------------------------------
+
+TITLE: Using Lucide Icons in React
+DESCRIPTION: Demonstrates how to import and use Lucide icons in a React component. It shows both default and named imports, as well as how to pass props for customization.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/how-to-use-icons.md#2025-04-10_snippet_1
+
+LANGUAGE: jsx
+CODE:
+```
+import { AlertTriangle } from "lucide-react";
+import LucideSettings from "lucide-react/dist/esm/icons/settings";
+
+const App = () => {
+  return (
+    <div>
+      <AlertTriangle color="red" size={48} />
+      <LucideSettings color="blue" size={24} />
+    </div>
+  );
+};
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide Icons with npm
+DESCRIPTION: Shows how to install Lucide icons using npm. This is a prerequisite step for using the icons in various JavaScript frameworks.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/how-to-use-icons.md#2025-04-10_snippet_0
+
+LANGUAGE: bash
+CODE:
+```
+npm install lucide
+```
+
+----------------------------------------
+
+TITLE: Using Lucide React Icons with Custom Props
+DESCRIPTION: Example of importing and using a Lucide React icon component (Camera) with custom color and size props. This demonstrates how to adjust the icon's appearance.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-react.md#2025-04-10_snippet_1
+
+LANGUAGE: jsx
+CODE:
+```
+import { Camera } from 'lucide-react';
+
+// Usage
+const App = () => {
+  return <Camera color="red" size={48} />;
+};
+
+export default App;
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide for React Applications
+DESCRIPTION: Commands to install the Lucide icon library for React applications using different package managers.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/installation.md#2025-04-10_snippet_1
+
+LANGUAGE: sh
+CODE:
+```
+pnpm install lucide-react
+```
+
+LANGUAGE: sh
+CODE:
+```
+yarn add lucide-react
+```
+
+LANGUAGE: sh
+CODE:
+```
+npm install lucide-react
+```
+
+LANGUAGE: sh
+CODE:
+```
+bun add lucide-react
+```
+
+----------------------------------------
+
+TITLE: Basic Usage of Lucide Icons in Vue 3
+DESCRIPTION: Demonstrates how to import and use individual icons as Vue components with customizable props. This example shows importing the Camera icon and applying color and size attributes.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-vue-next.md#2025-04-10_snippet_1
+
+LANGUAGE: vue
+CODE:
+```
+<script setup>
+import { Camera } from 'lucide-vue-next';
+</script>
+
+<template>
+  <Camera
+    color="red"
+    :size="32"
+  />
+</template>
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide React with Package Managers
+DESCRIPTION: Commands for installing the Lucide React package using different package managers including pnpm, yarn, npm, and bun.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-react.md#2025-04-10_snippet_0
+
+LANGUAGE: sh
+CODE:
+```
+pnpm install lucide-react
+```
+
+LANGUAGE: sh
+CODE:
+```
+yarn add lucide-react
+```
+
+LANGUAGE: sh
+CODE:
+```
+npm install lucide-react
+```
+
+LANGUAGE: sh
+CODE:
+```
+bun add lucide-react
+```
+
+----------------------------------------
+
+TITLE: Basic Usage of Lucide Icon in Svelte
+DESCRIPTION: Example of importing and using a Lucide icon component in a Svelte file.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-svelte.md#2025-04-10_snippet_1
+
+LANGUAGE: svelte
+CODE:
+```
+<script>
+  import { Skull } from '@lucide/svelte';
+</script>
+
+<Skull />
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide Vue Next with Package Managers
+DESCRIPTION: Shows different installation methods for adding lucide-vue-next to your project using various package managers including pnpm, yarn, npm, and bun.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-vue-next.md#2025-04-10_snippet_0
+
+LANGUAGE: sh
+CODE:
+```
+pnpm install lucide-vue-next
+```
+
+LANGUAGE: sh
+CODE:
+```
+yarn add lucide-vue-next
+```
+
+LANGUAGE: sh
+CODE:
+```
+npm install lucide-vue-next
+```
+
+LANGUAGE: sh
+CODE:
+```
+bun add lucide-vue-next
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide Vue Next with Package Managers
+DESCRIPTION: Shows different installation methods for adding lucide-vue-next to your project using various package managers including pnpm, yarn, npm, and bun.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-vue-next.md#2025-04-10_snippet_0
+
+LANGUAGE: sh
+CODE:
+```
+pnpm install lucide-vue-next
+```
+
+LANGUAGE: sh
+CODE:
+```
+yarn add lucide-vue-next
+```
+
+LANGUAGE: sh
+CODE:
+```
+npm install lucide-vue-next
+```
+
+LANGUAGE: sh
+CODE:
+```
+bun add lucide-vue-next
+```
+
+----------------------------------------
+
+TITLE: Using Lucide Icons in Solid Components
+DESCRIPTION: Example of importing and using a Lucide icon component in a Solid application. Demonstrates passing props to customize the icon's appearance.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-solid.md#2025-04-10_snippet_1
+
+LANGUAGE: jsx
+CODE:
+```
+import { Camera } from 'lucide-solid';
+
+// Usage
+const App = () => {
+  return <Camera color="red" size={48} />;
+};
+
+export default App;
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide Vue Using Package Managers
+DESCRIPTION: Different package manager commands to install lucide-vue dependency
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-vue.md#2025-04-10_snippet_0
+
+LANGUAGE: sh
+CODE:
+```
+pnpm install lucide-vue
+```
+
+LANGUAGE: sh
+CODE:
+```
+yarn add lucide-vue
+```
+
+LANGUAGE: sh
+CODE:
+```
+npm install lucide-vue
+```
+
+LANGUAGE: sh
+CODE:
+```
+bun add lucide-vue
+```
+
+----------------------------------------
+
+TITLE: Basic Lucide Icon Usage in Astro
+DESCRIPTION: Demonstrates the default usage of a Lucide icon in an Astro component by importing and using the Skull icon component.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-astro.md#2025-04-10_snippet_1
+
+LANGUAGE: astro
+CODE:
+```
+---
+import { Skull } from '@lucide/astro';
+---
+
+<Skull />
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide Svelte Package
+DESCRIPTION: Commands for installing the @lucide/svelte package using different package managers.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-svelte.md#2025-04-10_snippet_0
+
+LANGUAGE: bash
+CODE:
+```
+pnpm add @lucide/svelte
+```
+
+LANGUAGE: bash
+CODE:
+```
+yarn add @lucide/svelte
+```
+
+LANGUAGE: bash
+CODE:
+```
+npm install @lucide/svelte
+```
+
+LANGUAGE: bash
+CODE:
+```
+bun add @lucide/svelte
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide Svelte Package
+DESCRIPTION: Commands for installing the @lucide/svelte package using different package managers.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-svelte.md#2025-04-10_snippet_0
+
+LANGUAGE: bash
+CODE:
+```
+pnpm add @lucide/svelte
+```
+
+LANGUAGE: bash
+CODE:
+```
+yarn add @lucide/svelte
+```
+
+LANGUAGE: bash
+CODE:
+```
+npm install @lucide/svelte
+```
+
+LANGUAGE: bash
+CODE:
+```
+bun add @lucide/svelte
+```
+
+----------------------------------------
+
+TITLE: Using Lucide with ESModules
+DESCRIPTION: Examples showing how to implement Lucide using ESModules. Includes HTML markup with the data-lucide attribute and JavaScript code that imports and initializes icons, with both a comprehensive and recommended approach for tree-shaking.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide.md#2025-04-10_snippet_3
+
+LANGUAGE: html
+CODE:
+```
+<!-- Your HTML file -->
+<i data-lucide="menu"></i>
+```
+
+LANGUAGE: js
+CODE:
+```
+import { createIcons, icons } from 'lucide';
+
+// Caution, this will import all the icons and bundle them.
+createIcons({ icons });
+
+// Recommended way, to include only the icons you need.
+import { createIcons, Menu, ArrowRight, Globe } from 'lucide';
+
+createIcons({
+  icons: {
+    Menu,
+    ArrowRight,
+    Globe
+  }
+});
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide Angular Package
+DESCRIPTION: Package installation commands for different package managers including pnpm, yarn, npm, and bun.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-angular.md#2025-04-10_snippet_0
+
+LANGUAGE: shell
+CODE:
+```
+pnpm install lucide-angular
+```
+
+LANGUAGE: shell
+CODE:
+```
+yarn add lucide-angular
+```
+
+LANGUAGE: shell
+CODE:
+```
+npm install lucide-angular
+```
+
+LANGUAGE: shell
+CODE:
+```
+bun add lucide-angular
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide Angular Package
+DESCRIPTION: Package installation commands for different package managers including pnpm, yarn, npm, and bun.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-angular.md#2025-04-10_snippet_0
+
+LANGUAGE: shell
+CODE:
+```
+pnpm install lucide-angular
+```
+
+LANGUAGE: shell
+CODE:
+```
+yarn add lucide-angular
+```
+
+LANGUAGE: shell
+CODE:
+```
+npm install lucide-angular
+```
+
+LANGUAGE: shell
+CODE:
+```
+bun add lucide-angular
+```
+
+----------------------------------------
+
+TITLE: Using lucide-static via CDN
+DESCRIPTION: HTML example showing how to use lucide-static directly from a CDN, including loading a single SVG icon and setting up the icon font.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-static.md#2025-04-10_snippet_1
+
+LANGUAGE: html
+CODE:
+```
+<!-- SVG file for a single icon -->
+<img src="https://unpkg.com/lucide-static@latest/icons/house.svg" />
+
+<!-- Icon font -->
+<style>
+  @font-face {
+    font-family: 'LucideIcons';
+    src: url(https://unpkg.com/lucide-static@latest/font/Lucide.ttf) format('truetype');
+  }
+</style>
+```
+
+----------------------------------------
+
+TITLE: Basic Usage with Unpkg CDN
+DESCRIPTION: Complete HTML example showing how to use Lucide icons with the unpkg CDN. The example demonstrates how to create icons using the data-lucide attribute and initialize them with the createIcons function.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide.md#2025-04-10_snippet_2
+
+LANGUAGE: html
+CODE:
+```
+<!DOCTYPE html>
+<body>
+  <i data-lucide="volume-2" class="my-class"></i>
+  <i data-lucide="x"></i>
+  <i data-lucide="menu"></i>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide Preact using Package Managers
+DESCRIPTION: Shows how to install the Lucide Preact package using different package managers like pnpm, yarn, npm, and bun.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-preact.md#2025-04-10_snippet_0
+
+LANGUAGE: sh
+CODE:
+```
+pnpm install lucide-preact
+```
+
+LANGUAGE: sh
+CODE:
+```
+yarn add lucide-preact
+```
+
+LANGUAGE: sh
+CODE:
+```
+npm install lucide-preact
+```
+
+LANGUAGE: sh
+CODE:
+```
+bun add lucide-preact
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide for Web Applications
+DESCRIPTION: Commands to install the Lucide icon library for web applications using different package managers.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/installation.md#2025-04-10_snippet_0
+
+LANGUAGE: sh
+CODE:
+```
+pnpm install lucide
+```
+
+LANGUAGE: sh
+CODE:
+```
+yarn add lucide
+```
+
+LANGUAGE: sh
+CODE:
+```
+npm install lucide
+```
+
+LANGUAGE: sh
+CODE:
+```
+bun add lucide
+```
+
+----------------------------------------
+
+TITLE: Including Lucide via CDN
+DESCRIPTION: HTML script tags to include Lucide library via CDN, with options for both development and production versions.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide.md#2025-04-10_snippet_1
+
+LANGUAGE: html
+CODE:
+```
+<!-- Development version -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<!-- Production version -->
+<script src="https://unpkg.com/lucide@latest"></script>
+```
+
+----------------------------------------
+
+TITLE: Using Dynamic Icon Component in React
+DESCRIPTION: Example of using the DynamicIcon component to load icons dynamically by name. This is useful for applications that need to display icons based on data from a CMS or database.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-react.md#2025-04-10_snippet_4
+
+LANGUAGE: jsx
+CODE:
+```
+import { DynamicIcon } from 'lucide-react/dynamic';
+
+const App = () => (
+  <DynamicIcon name="camera" color="red" size={48} />
+);
+```
+
+----------------------------------------
+
+TITLE: Applying SVG Attributes to Lucide React Icons
+DESCRIPTION: Example showing how to apply SVG attributes as props to a Lucide React icon component. This demonstrates setting the size and fill color of the Camera icon.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-react.md#2025-04-10_snippet_2
+
+LANGUAGE: jsx
+CODE:
+```
+// Usage
+const App = () => {
+  return <Camera size={48} fill="red" />;
+};
+```
+
+----------------------------------------
+
+TITLE: Applying SVG Attributes to Lucide React Icons
+DESCRIPTION: Example showing how to apply SVG attributes as props to a Lucide React icon component. This demonstrates setting the size and fill color of the Camera icon.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-react.md#2025-04-10_snippet_2
+
+LANGUAGE: jsx
+CODE:
+```
+// Usage
+const App = () => {
+  return <Camera size={48} fill="red" />;
+};
+```
+
+----------------------------------------
+
+TITLE: Applying SVG Attributes to Lucide Icons
+DESCRIPTION: Shows how to use SVG presentation attributes as props for styling the icon. This example demonstrates applying a fill color to the Camera component.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-vue-next.md#2025-04-10_snippet_2
+
+LANGUAGE: vue
+CODE:
+```
+<template>
+  <Camera fill="red" />
+</template>
+```
+
+----------------------------------------
+
+TITLE: Applying SVG Attributes to Lucide Icons
+DESCRIPTION: Shows how to use SVG presentation attributes as props for styling the icon. This example demonstrates applying a fill color to the Camera component.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-vue-next.md#2025-04-10_snippet_2
+
+LANGUAGE: vue
+CODE:
+```
+<template>
+  <Camera fill="red" />
+</template>
+```
+
+----------------------------------------
+
+TITLE: Importing Lucide Icons Directly
+DESCRIPTION: Example of importing a Lucide icon directly from the icons directory for faster builds.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-svelte.md#2025-04-10_snippet_3
+
+LANGUAGE: svelte
+CODE:
+```
+<script>
+  import CircleAlert from '@lucide/svelte/icons/circle-alert';
+</script>
+
+<CircleAlert color="#ff3e98" />
+```
+
+----------------------------------------
+
+TITLE: Using the Generic Icon Component
+DESCRIPTION: Example showing how to use the generic icon component in a React Native application.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-react-native.md#2025-04-10_snippet_5
+
+LANGUAGE: jsx
+CODE:
+```
+import Icon from './Icon';
+
+const App = () => {
+  return <Icon name="home" />;
+};
+
+export default App;
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide Solid with Package Managers
+DESCRIPTION: Commands for installing the lucide-solid package using different package managers.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-solid.md#2025-04-10_snippet_0
+
+LANGUAGE: sh
+CODE:
+```
+pnpm install lucide-solid
+```
+
+LANGUAGE: sh
+CODE:
+```
+yarn add lucide-solid
+```
+
+LANGUAGE: sh
+CODE:
+```
+npm install lucide-solid
+```
+
+LANGUAGE: sh
+CODE:
+```
+bun add lucide-solid
+```
+
+----------------------------------------
+
+TITLE: Customizing Icon Properties
+DESCRIPTION: Example of using props to customize icon appearance with size, color, and stroke width.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-angular.md#2025-04-10_snippet_4
+
+LANGUAGE: html
+CODE:
+```
+<i-lucide name="home" [size]="48" color="red" [strokeWidth]="1"></i-lucide>
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide Astro with Package Managers
+DESCRIPTION: Installation commands for adding the Lucide Astro package using different package managers. Includes options for pnpm, yarn, npm, and bun.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-astro.md#2025-04-10_snippet_0
+
+LANGUAGE: sh
+CODE:
+```
+pnpm add @lucide/astro
+```
+
+LANGUAGE: sh
+CODE:
+```
+yarn add @lucide/astro
+```
+
+LANGUAGE: sh
+CODE:
+```
+npm install @lucide/astro
+```
+
+LANGUAGE: sh
+CODE:
+```
+bun add @lucide/astro
+```
+
+----------------------------------------
+
+TITLE: Applying SVG Attributes to Lucide Icons in Preact
+DESCRIPTION: Shows how to apply SVG attributes directly to Lucide icon components in Preact, demonstrating the flexibility in styling SVG elements.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-preact.md#2025-04-10_snippet_2
+
+LANGUAGE: jsx
+CODE:
+```
+// Usage
+const App = () => {
+  return <Camera fill="red" stroke-linejoin="bevel" />;
+};
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide with Package Managers
+DESCRIPTION: Different commands to install the Lucide icon library using various package managers including pnpm, yarn, npm, and bun.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide.md#2025-04-10_snippet_0
+
+LANGUAGE: sh
+CODE:
+```
+pnpm install lucide
+```
+
+LANGUAGE: sh
+CODE:
+```
+yarn add lucide
+```
+
+LANGUAGE: sh
+CODE:
+```
+npm install lucide
+```
+
+LANGUAGE: sh
+CODE:
+```
+bun add lucide
+```
+
+----------------------------------------
+
+TITLE: Custom Element Binding with Attributes
+DESCRIPTION: Example showing how to create a Lucide icon with custom attributes such as classes and styling parameters, then add it to the DOM as a custom element.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide.md#2025-04-10_snippet_7
+
+LANGUAGE: js
+CODE:
+```
+import { createElement, Menu } from 'lucide';
+
+const menuIcon = createElement(Menu, {
+  class: ['my-custom-class', 'icon'],
+  'stroke-width': 1,
+  stroke: '#333'
+}); // Returns HTMLElement (svg)
+
+// Append HTMLElement in the DOM
+const myApp = document.getElementById('app');
+myApp.appendChild(menuIcon);
+```
+
+----------------------------------------
+
+TITLE: Installing Lucide React Native Package
+DESCRIPTION: Package installation commands for different package managers including pnpm, yarn, npm, and bun.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-react-native.md#2025-04-10_snippet_0
+
+LANGUAGE: bash
+CODE:
+```
+pnpm install lucide-react-native
+```
+
+LANGUAGE: bash
+CODE:
+```
+yarn add lucide-react-native
+```
+
+LANGUAGE: bash
+CODE:
+```
+npm install lucide-react-native
+```
+
+LANGUAGE: bash
+CODE:
+```
+bun add lucide-react-native
+```
+
+----------------------------------------
+
+TITLE: Using Lucide Lab Icons with Icon Component
+DESCRIPTION: Example of using the Icon component to render a custom icon from Lucide lab. This demonstrates how to use icons that are not part of the main Lucide library.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-react.md#2025-04-10_snippet_3
+
+LANGUAGE: jsx
+CODE:
+```
+import { Icon } from 'lucide-react';
+import { burger } from '@lucide/lab';
+
+const App = () => (
+  <Icon iconNode={burger} />
+);
+```
+
+----------------------------------------
+
+TITLE: Using Lucide Lab Icons with Icon Component
+DESCRIPTION: Example of using the Icon component to render a custom icon from Lucide lab. This demonstrates how to use icons that are not part of the main Lucide library.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-react.md#2025-04-10_snippet_3
+
+LANGUAGE: jsx
+CODE:
+```
+import { Icon } from 'lucide-react';
+import { burger } from '@lucide/lab';
+
+const App = () => (
+  <Icon iconNode={burger} />
+);
+```
+
+----------------------------------------
+
+TITLE: Using the Icon Component with Lucide Lab
+DESCRIPTION: Demonstrates how to use the generic Icon component to render icons from Lucide lab. This approach allows using icons that are not part of the main library by passing the iconNode prop.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-vue-next.md#2025-04-10_snippet_3
+
+LANGUAGE: vue
+CODE:
+```
+<script setup>
+import { Icon } from 'lucide-vue-next';
+import { burger } from '@lucide/lab';
+</script>
+
+<template>
+  <Icon :iconNode="burger" />
+</template>
+```
+
+----------------------------------------
+
+TITLE: Using the Icon Component with Lucide Lab
+DESCRIPTION: Demonstrates how to use the generic Icon component to render icons from Lucide lab. This approach allows using icons that are not part of the main library by passing the iconNode prop.
+SOURCE: https://github.com/lucide-icons/lucide/blob/main/docs/guide/packages/lucide-vue-next.md#2025-04-10_snippet_3
+
+LANGUAGE: vue
+CODE:
+```
+<script setup>
+import { Icon } from 'lucide-vue-next';
+import { burger } from '@lucide/lab';
+</script>
+
+<template>
+  <Icon :iconNode="burger" />
+</template>
+```
